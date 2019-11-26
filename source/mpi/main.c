@@ -12,7 +12,7 @@ int main( int argc, char **argv ) {
     print_arguments(arguments);
 
     struct grid *grid = allocate_grid(arguments.dimention);
-    initialize_grid(&grid);
+    initialize_grid_from_inputfile(&grid,"../inputfiles/grid_10x10");
     
     print_grid(grid,"output");
 

@@ -8,6 +8,10 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 #include <mpi.h>
 
 #define BUFFER_SIZE 256

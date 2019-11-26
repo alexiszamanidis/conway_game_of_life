@@ -10,6 +10,7 @@ struct grid {
 
 struct grid *allocate_grid(int );
 void initialize_grid(struct grid **);
+void initialize_grid_from_inputfile(struct grid **, char *);
 void print_grid(struct grid *, char *);
 void free_grid(struct grid **);
 

@@ -33,6 +33,24 @@ void initialize_grid(struct grid **grid) {
             (*grid)->array[i][j] = array_content[ rand() % 2 ];
 }
 
+void initialize_grid_from_inputfile(struct grid **grid, char *inputfile) {
+    FILE *file_pointer = fopen(inputfile, "r");
+    if ( file_pointer == NULL ) {
+        printf("initialize_grid_from_inputfile: %s\n",strerror(errno));
+        exit(FAILURE);
+    }
+    char *line=NULL;
+    size_t length=0;
+    for( int i = 0 ; i < (*grid)->dimention ; i++ ) {
+        getline(&line, &length, file_pointer);
+        line[strlen(line)-1] = '\0';
+        for( int j = 0 ; j < (*grid)->dimention ; j++ )
+            (*grid)->array[i][j] = line[j];
+    }
+    free(line);
+    fclose(file_pointer);
+}
+
 void print_grid(struct grid *grid, char *filename) {
     FILE *file_pointer = fopen(filename, "w+");
     if ( file_pointer == NULL ) {
