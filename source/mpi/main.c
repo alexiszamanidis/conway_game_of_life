@@ -1,6 +1,6 @@
-#include "../header/header.h"
-#include "../header/grid.h"
-#include "../header/utilities.h"
+#include "../../header/header.h"
+#include "../../header/grid.h"
+#include "../../header/utilities.h"
 
 int main( int argc, char **argv ) {
 

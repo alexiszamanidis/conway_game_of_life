@@ -1,4 +1,4 @@
-#include "../header/utilities.h"
+#include "../../header/utilities.h"
 
 void parse_arguments(struct arguments *arguments,int argc, char **argv) {
     int option;
