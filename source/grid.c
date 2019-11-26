@@ -43,7 +43,7 @@ void print_grid(struct grid *grid, char *filename) {
     FILE *file_pointer = fopen(filename, "w+");
     if ( file_pointer == NULL ) {
         printf("print_grid: %s\n",strerror(errno));
-        exit(EXIT_FAILURE);
+        exit(FAILURE);
     }
 
     for( int i = 0 ; i < grid->dimention ; i++ ) {

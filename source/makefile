@@ -1,7 +1,7 @@
 CC = mpicc
 CFLAGS = -g -Wall -lm
 EXEC = game_of_life
-OBJS = grid.o
+OBJS = grid.o utilities.o
 OUTPUT = output
 
 all: main usage
@@ -13,6 +13,9 @@ main: $(OBJS) main.c
 
 grid.o: grid.c 
 	$(CC) $(CFLAGS) -c grid.c
+
+utilities.o: utilities.c
+	$(CC) $(CFLAGS) -c utilities.c
 
 usage:
 	@echo 'Usage of Project: valgrind ./game_of_life'

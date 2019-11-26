@@ -1,16 +1,22 @@
 #include "../header/header.h"
 #include "../header/grid.h"
+#include "../header/utilities.h"
 
 int main( int argc, char **argv ) {
 
     srand(time(NULL));
+    struct arguments arguments = (struct arguments) { .dimention = 10, .loops = 10, .filename = "\0", .output = false };
 
+    parse_arguments(&arguments,argc,argv);
+
+    print_arguments(arguments);
+/*
     struct grid *grid = allocate_grid(5);
     initialize_grid(&grid);
     
     print_grid(grid,"output");
 
     free_grid(&grid);
-
+*/
     return SUCCESS;
 }
