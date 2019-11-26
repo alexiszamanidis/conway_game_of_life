@@ -6,7 +6,7 @@
 struct arguments {
     int dimention;
     int loops;
-    char filename[BUFFER_SIZE];
+    char inputfile[BUFFER_SIZE];
     bool output;
 };
 

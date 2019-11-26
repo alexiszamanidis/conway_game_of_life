@@ -2,7 +2,7 @@
 
 void parse_arguments(struct arguments *arguments,int argc, char **argv) {
     int option;
-    while((option = getopt(argc, argv,"d:l:f:o")) != -1){
+    while((option = getopt(argc, argv,"d:l:i:o")) != -1){
         switch(option){
             case 'd':
                 arguments->dimention = atoi(optarg);
@@ -11,8 +11,8 @@ void parse_arguments(struct arguments *arguments,int argc, char **argv) {
             case 'l':
                 arguments->loops = atoi(optarg);
                 break;
-            case 'f':
-                strcpy(arguments->filename,optarg);
+            case 'i':
+                strcpy(arguments->inputfile,optarg);
                 break;
             case 'o':
                 arguments->output = true;
@@ -27,6 +27,6 @@ void parse_arguments(struct arguments *arguments,int argc, char **argv) {
 void print_arguments(struct arguments arguments) {
     printf("dimention = %d\n",arguments.dimention);
     printf("loops = %d\n",arguments.loops);
-    printf("filename = %s\n",arguments.filename);
+    printf("inputfile = %s\n",arguments.inputfile);
     printf(arguments.output ? "output = true\n":"output = false\n");
 }
