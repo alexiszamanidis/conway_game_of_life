@@ -27,16 +27,10 @@ struct grid *allocate_grid(int dimention) {
 }
 
 void initialize_grid(struct grid **grid) {
-    int number;
-    for( int i = 0 ; i < (*grid)->dimention ; i++ ) {
-        for( int j = 0 ; j < (*grid)->dimention ; j++ ) {
-            number = rand() % 100 + 1;
-            if (number < 30)
-                (*grid)->array[i][j] = '*';
-            else
-                (*grid)->array[i][j] = '.';
-        }
-    }
+    char array_content[] = { '*', '.' };
+    for( int i = 0 ; i < (*grid)->dimention ; i++ )
+        for( int j = 0 ; j < (*grid)->dimention ; j++ )
+            (*grid)->array[i][j] = array_content[ rand() % 2 ];
 }
 
 void print_grid(struct grid *grid, char *filename) {

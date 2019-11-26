@@ -10,13 +10,13 @@ int main( int argc, char **argv ) {
     parse_arguments(&arguments,argc,argv);
 
     print_arguments(arguments);
-/*
-    struct grid *grid = allocate_grid(5);
+
+    struct grid *grid = allocate_grid(arguments.dimention);
     initialize_grid(&grid);
     
     print_grid(grid,"output");
 
     free_grid(&grid);
-*/
+
     return SUCCESS;
 }
