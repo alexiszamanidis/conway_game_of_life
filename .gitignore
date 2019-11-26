@@ -50,3 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# vscode
+.vscode
+
+# output
+output
+
+# executable
+game_of_life
