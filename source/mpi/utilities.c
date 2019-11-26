@@ -5,7 +5,7 @@ void parse_arguments(struct arguments *arguments,int argc, char **argv) {
     while((option = getopt(argc, argv,"d:l:i:o")) != -1){
         switch(option){
             case 'd':
-                arguments->dimention = atoi(optarg);
+                arguments->dimension = atoi(optarg);
                 printf("elaaa=%d\n",atoi(optarg));
                 break;
             case 'l':
@@ -25,7 +25,7 @@ void parse_arguments(struct arguments *arguments,int argc, char **argv) {
 }
 
 void print_arguments(struct arguments arguments) {
-    printf("dimention = %d\n",arguments.dimention);
+    printf("dimension = %d\n",arguments.dimension);
     printf("loops = %d\n",arguments.loops);
     printf("inputfile = %s\n",arguments.inputfile);
     printf(arguments.output ? "output = true\n":"output = false\n");

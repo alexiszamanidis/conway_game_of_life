@@ -4,7 +4,7 @@
 #include "./header.h"
 
 struct arguments {
-    int dimention;
+    int dimension;
     int loops;
     char inputfile[BUFFER_SIZE];
     bool output;

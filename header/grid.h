@@ -5,7 +5,7 @@
 
 struct grid {
     char **array;
-    int dimention;
+    int dimension;
 };
 
 struct grid *allocate_grid(int );

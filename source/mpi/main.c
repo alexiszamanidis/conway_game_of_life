@@ -6,7 +6,7 @@ int main( int argc, char **argv ) {
     int number_of_processes, rank_of_the_process;
 
     srand(time(NULL));
-    struct arguments arguments = (struct arguments) { .dimention = 10, .loops = 10, .inputfile = "\0", .output = false };
+    struct arguments arguments = (struct arguments) { .dimension = 10, .loops = 10, .inputfile = "\0", .output = false };
 
     parse_arguments(&arguments,argc,argv);
 
