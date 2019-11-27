@@ -1,6 +1,6 @@
 #include "../../header/grid.h"
 
-struct grid *allocate_grid(int dimension) {
+struct grid *allocate_grid(int dimension, int number_of_processes) {
     struct grid *grid = (struct grid *)malloc(sizeof(struct grid));
     if( grid == NULL ) {
         printf("allocate_grid: %s\n",strerror(errno));
@@ -22,6 +22,7 @@ struct grid *allocate_grid(int dimension) {
     }
 
     grid->dimension = dimension;
+    calculate_subgrid_size(&grid,number_of_processes);
 
     return grid;
 }
@@ -57,13 +58,28 @@ void print_grid(struct grid *grid, char *filename) {
         printf("print_grid: %s\n",strerror(errno));
         exit(FAILURE);
     }
-
+    fprintf(file_pointer, "Dimension = %d, Subgrid size = %d \n ",grid->dimension, grid->subgrid_size);
     for( int i = 0 ; i < grid->dimension ; i++ ) {
         for( int j = 0 ; j < grid->dimension ; j++ )
             fprintf(file_pointer, "%c",grid->array[i][j]);
         fprintf(file_pointer, "\n");
     }
     fclose(file_pointer);
+}
+
+void calculate_subgrid_size(struct grid **grid,int number_of_processes) {
+    int root = is_perfect_square(number_of_processes);
+    printf("%d %d",root,(*grid)->dimension);
+    if( root == -1 ) {
+        printf("calculate_subgrid_size: number of processes should be perfect square\n");
+        exit(FAILURE);
+    }
+    else if( ((*grid)->dimension % root) != 0 ) {
+        printf("calculate_subgrid_size: number of processes can not divide perfectly the dimension\n");
+        exit(FAILURE);
+    }
+    else
+        (*grid)->subgrid_size = number_of_processes;
 }
 
 void free_grid(struct grid **grid) {

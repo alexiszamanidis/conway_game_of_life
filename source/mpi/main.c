@@ -2,6 +2,8 @@
 #include "../../header/grid.h"
 #include "../../header/utilities.h"
 
+// mpiexec -n 4 ./game_of_life 
+
 int main( int argc, char **argv ) {
     int number_of_processes, rank_of_the_process;
 
@@ -16,10 +18,17 @@ int main( int argc, char **argv ) {
     // get the rank of the process
     MPI_Comm_rank(MPI_COMM_WORLD, &rank_of_the_process);
 
-    if( rank_of_the_process == 0 )
+    struct grid *grid = allocate_grid(arguments.dimension,number_of_processes);
+    initialize_grid(&grid);
+
+    if( rank_of_the_process == 0 ) {
         print_arguments(arguments);
+        print_grid(grid,"output");
+    }
 
     printf("Mpi rank %d out of %d processors\nis perfect square = %d\n",rank_of_the_process,number_of_processes,is_perfect_square(rank_of_the_process));
+
+    free_grid(&grid);
 
     // finalize the MPI environment
     MPI_Finalize();
