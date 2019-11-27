@@ -1,5 +1,6 @@
 CC = mpicc
-CFLAGS = -g -Wall -lm
+CFLAGS = -g -Wall
+MATHFLAG = -lm
 EXEC = game_of_life
 OBJS = grid.o utilities.o
 OUTPUT = output
@@ -8,7 +9,7 @@ all: main usage
 
 # main program
 main: $(OBJS) main.c 
-	$(CC) $(CFLAGS) $(OBJS) main.c -o $(EXEC)
+	$(CC) $(CFLAGS) $(OBJS) main.c -o $(EXEC) $(MATHFLAG)
 	rm -rf $(OBJS)
 
 grid.o: grid.c 

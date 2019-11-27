@@ -12,5 +12,6 @@ struct arguments {
 
 void parse_arguments(struct arguments *,int , char **);
 void print_arguments(struct arguments );
+int is_perfect_square(int );
 
 #endif

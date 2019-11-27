@@ -19,7 +19,7 @@ int main( int argc, char **argv ) {
     if( rank_of_the_process == 0 )
         print_arguments(arguments);
 
-    printf("Mpi rank %d out of %d processors\n",rank_of_the_process,number_of_processes);
+    printf("Mpi rank %d out of %d processors\nis perfect square = %d\n",rank_of_the_process,number_of_processes,is_perfect_square(rank_of_the_process));
 
     // finalize the MPI environment
     MPI_Finalize();

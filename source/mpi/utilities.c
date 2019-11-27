@@ -30,3 +30,12 @@ void print_arguments(struct arguments arguments) {
     printf("inputfile = %s\n",arguments.inputfile);
     printf(arguments.output ? "output = true\n":"output = false\n");
 }
+
+int is_perfect_square(int number) {
+    double root = sqrt((double)number);
+
+    if( (root - floor(root)) == 0)
+        return root;
+    else
+        return -1;
+}
