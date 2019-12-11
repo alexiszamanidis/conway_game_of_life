@@ -7,14 +7,14 @@
 struct grid {
     char **array;
     int dimension;
-    int subgrid_size;
+    int subgrid_dimension;
 };
 
 struct grid *allocate_grid(int , int);
 void initialize_grid(struct grid **);
 void initialize_grid_from_inputfile(struct grid **, char *);
 void print_grid(struct grid *, char *);
-void calculate_subgrid_size(struct grid **,int );
+void calculate_subgrid_dimension(struct grid **,int );
 void free_grid(struct grid **);
 
 #endif

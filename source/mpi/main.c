@@ -28,12 +28,10 @@ int main( int argc, char **argv ) {
     struct grid *grid = allocate_grid(arguments.dimension,number_of_processes);
     initialize_grid(&grid);
 
-    if( rank_of_the_process == 0 ) {
+    if( (rank_of_the_process == 0) && (arguments.output == true) ) {
         print_arguments(arguments);
         print_grid(grid,"output");
     }
-
-    printf("Mpi rank %d out of %d processors\nis perfect square = %d\n",rank_of_the_process,number_of_processes,is_perfect_square(rank_of_the_process));
 
     // stop Wtime and Profiling
     local_end = MPI_Wtime();

@@ -6,7 +6,6 @@ void parse_arguments(struct arguments *arguments,int argc, char **argv) {
         switch(option){
             case 'd':
                 arguments->dimension = atoi(optarg);
-                printf("elaaa=%d\n",atoi(optarg));
                 break;
             case 'l':
                 arguments->loops = atoi(optarg);
