@@ -38,3 +38,31 @@ int is_perfect_square(int number) {
     else
         return -1;
 }
+
+void calculate_neighbor_coords_processes(struct neighbor_processes *neighbor_processes, int *coords) {
+    neighbor_processes->bottom_neighbor_coords[0] = coords[0] + 1;
+    neighbor_processes->bottom_neighbor_coords[1] = coords[1];
+    neighbor_processes->bottom_right_neighbor_coords[0] = coords[0] + 1;
+    neighbor_processes->bottom_right_neighbor_coords[1] = coords[1] + 1;
+    neighbor_processes->bottom_left_neighbor_coords[0] = coords[0] + 1;
+    neighbor_processes->bottom_left_neighbor_coords[1] = coords[1] - 1;
+    neighbor_processes->top_neighbor_coords[0] = coords[0] - 1;
+    neighbor_processes->top_neighbor_coords[1] = coords[1];
+    neighbor_processes->top_right_neighbor_coords[0] = coords[0] - 1;
+    neighbor_processes->top_right_neighbor_coords[1] = coords[1] + 1;
+    neighbor_processes->top_left_neighbor_coords[0] = coords[0] - 1;
+    neighbor_processes->top_left_neighbor_coords[1] = coords[1] - 1;
+    neighbor_processes->right_neighbor_coords[0] = coords[0];
+    neighbor_processes->right_neighbor_coords[1] = coords[1] + 1;
+    neighbor_processes->left_neighbor_coords[0] = coords[0];
+    neighbor_processes->left_neighbor_coords[1] = coords[1] - 1;
+}
+
+void print_neighbor_ranks(struct neighbor_processes neighbor_processes, int rank_of_the_process) {
+    printf("Process rank %d\nNeighbors Ranks: bottom = %d, bottom_right = %d, bottom_left = %d, top = %d, top_right = %d, top_left = %d, right = %d, left = %d \n"
+            ,rank_of_the_process
+            ,neighbor_processes.bottom_neighbor_rank,neighbor_processes.bottom_right_neighbor_rank
+            ,neighbor_processes.bottom_left_neighbor_rank,neighbor_processes.top_neighbor_rank
+            ,neighbor_processes.top_right_neighbor_rank,neighbor_processes.top_left_neighbor_rank,
+            neighbor_processes.right_neighbor_rank,neighbor_processes.left_neighbor_rank);
+}

@@ -9,7 +9,7 @@ int main( int argc, char **argv ) {
     double local_start, local_end, local_elapsed, max_elapsed;
     char **local_grid, **next_local_grid;
     int periods[2]= {1,1}, dim[2], coords[2];
-
+    struct neighbor_processes neighbor_processes;
     srand(time(NULL));
     struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .loops = DEFAULT_LOOPS, .inputfile = DEFAULT_INPUTFILE, .output = DEFAULT_OUTPUT };
     parse_arguments(&arguments,argc,argv);
@@ -52,6 +52,19 @@ int main( int argc, char **argv ) {
     // determines process coords in cartesian topology given rank in group
     MPI_Cart_coords(comm, rank_of_the_process, 2, coords);
     printf("rank = %d, coords[0] = %d, coords[1] = %d\n",rank_of_the_process,coords[0],coords[1]);
+
+    calculate_neighbor_coords_processes(&neighbor_processes,coords);
+
+    MPI_Cart_rank(comm, neighbor_processes.bottom_neighbor_coords, &neighbor_processes.bottom_neighbor_rank);
+    MPI_Cart_rank(comm, neighbor_processes.bottom_right_neighbor_coords, &neighbor_processes.bottom_right_neighbor_rank);
+    MPI_Cart_rank(comm, neighbor_processes.bottom_left_neighbor_coords, &neighbor_processes.bottom_left_neighbor_rank);
+    MPI_Cart_rank(comm, neighbor_processes.top_neighbor_coords, &neighbor_processes.top_neighbor_rank);
+    MPI_Cart_rank(comm, neighbor_processes.top_right_neighbor_coords, &neighbor_processes.top_right_neighbor_rank);
+    MPI_Cart_rank(comm, neighbor_processes.top_left_neighbor_coords, &neighbor_processes.top_left_neighbor_rank);
+    MPI_Cart_rank(comm, neighbor_processes.right_neighbor_coords, &neighbor_processes.right_neighbor_rank);
+    MPI_Cart_rank(comm, neighbor_processes.left_neighbor_coords, &neighbor_processes.left_neighbor_rank);
+
+    print_neighbor_ranks(neighbor_processes,rank_of_the_process);
 
     // stop Wtime and Profiling
     local_end = MPI_Wtime();
