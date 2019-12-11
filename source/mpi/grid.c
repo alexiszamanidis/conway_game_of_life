@@ -23,6 +23,7 @@ struct grid *allocate_grid(int dimension, int number_of_processes) {
 
     grid->dimension = dimension;
     calculate_subgrid_dimension(&grid,number_of_processes);
+    grid->process_grid_dimension = grid->dimension/grid->subgrid_dimension;
 
     return grid;
 }
@@ -58,7 +59,7 @@ void print_grid(struct grid *grid, char *filename) {
         printf("print_grid: %s\n",strerror(errno));
         exit(FAILURE);
     }
-    fprintf(file_pointer, "Dimension = %d, Subgrid dimension = %d \n",grid->dimension, grid->subgrid_dimension);
+    fprintf(file_pointer, "Dimension = %d, Subgrid dimension = %d, Process grid dimension = %d \n",grid->dimension, grid->subgrid_dimension, grid->process_grid_dimension);
     for( int i = 0 ; i < grid->dimension ; i++ ) {
         for( int j = 0 ; j < grid->dimension ; j++ )
             fprintf(file_pointer, "%c",grid->array[i][j]);

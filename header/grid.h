@@ -8,6 +8,7 @@ struct grid {
     char **array;
     int dimension;
     int subgrid_dimension;
+    int process_grid_dimension;
 };
 
 struct grid *allocate_grid(int , int);
