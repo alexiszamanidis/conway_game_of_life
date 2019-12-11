@@ -40,7 +40,7 @@ int main( int argc, char **argv ) {
 
     // print array if the user gave -o output option
     if( (rank_of_the_process == 0) && (arguments.output == true) ) {
-        print_arguments(arguments);
+    //    print_arguments(arguments);
         print_grid(grid,"output.csv");
     }
 
@@ -69,6 +69,26 @@ int main( int argc, char **argv ) {
     MPI_Cart_rank(comm, neighbor_processes.left_neighbor_coords, &neighbor_processes.left_neighbor_rank);
 
 //    print_neighbor_ranks(neighbor_processes,rank_of_the_process);
+
+    MPI_Request request;
+    MPI_Datatype columns;
+	MPI_Type_vector(grid->subgrid_dimension, 1, grid->subgrid_dimension, MPI_CHAR, &columns);
+	MPI_Type_commit(&columns);
+
+    for(  int i = 0 ; i < arguments.loops ; i++) {
+        if( (rank_of_the_process == 0) && (arguments.output == true) ) {
+            printf("generation: %d\n", i+1);
+        }
+        // send all neighbors
+        MPI_Isend(&local_grid[0][0], grid->subgrid_dimension, MPI_CHAR, neighbor_processes.top_neighbor_rank, 0, MPI_COMM_WORLD, &request);
+        MPI_Isend(&local_grid[grid->subgrid_dimension-1][0], grid->subgrid_dimension, MPI_CHAR, neighbor_processes.bottom_neighbor_rank, 0, MPI_COMM_WORLD, &request);
+        MPI_Isend(&local_grid[0][0], 1, columns, neighbor_processes.left_neighbor_rank, 0,MPI_COMM_WORLD, &request);
+        MPI_Isend(&local_grid[0][grid->subgrid_dimension-1], 1, columns, neighbor_processes.right_neighbor_rank, 0, MPI_COMM_WORLD, &request);
+        MPI_Isend(&local_grid[0][0], 1, MPI_CHAR, neighbor_processes.top_left_neighbor_rank, 0,MPI_COMM_WORLD, &request);
+		MPI_Isend(&local_grid[0][grid->subgrid_dimension-1], 1, MPI_CHAR, neighbor_processes.top_right_neighbor_rank, 0, MPI_COMM_WORLD, &request);
+		MPI_Isend(&local_grid[grid->subgrid_dimension-1][0], 1, MPI_CHAR, neighbor_processes.bottom_left_neighbor_rank, 0,MPI_COMM_WORLD, &request);
+		MPI_Isend(&local_grid[grid->subgrid_dimension-1][grid->subgrid_dimension-1],1, MPI_CHAR, neighbor_processes.bottom_right_neighbor_rank, 0, MPI_COMM_WORLD, &request);
+    }
 
     // stop Wtime and Profiling
     local_end = MPI_Wtime();

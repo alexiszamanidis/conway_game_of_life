@@ -9,6 +9,8 @@ struct grid_side_dimensions {
     char *bottom_dimension;
     char *left_dimension;
     char *right_dimension;
+    char top_left, top_right;
+    char bottom_left, bootom_right;
 };
 
 struct grid {
