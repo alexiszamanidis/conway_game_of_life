@@ -3,7 +3,7 @@ CFLAGS = -g -Wall
 MATHFLAG = -lm
 EXEC = game_of_life
 OBJS = grid.o utilities.o
-OUTPUT = output
+OUTPUT = output.csv
 
 all: main usage
 

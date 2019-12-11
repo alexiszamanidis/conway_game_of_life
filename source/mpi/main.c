@@ -25,12 +25,16 @@ int main( int argc, char **argv ) {
     local_start = MPI_Wtime();
     MPI_Pcontrol(1);
 
+    // allocate and initialize grid
     struct grid *grid = allocate_grid(arguments.dimension,number_of_processes);
-    initialize_grid(&grid);
+    if( strcmp(arguments.inputfile,"") == 0 )
+        initialize_grid(&grid);
+    else
+        initialize_grid_from_inputfile(&grid,arguments.inputfile);
 
     if( (rank_of_the_process == 0) && (arguments.output == true) ) {
         print_arguments(arguments);
-        print_grid(grid,"output");
+        print_grid(grid,"output.csv");
     }
 
     // stop Wtime and Profiling
