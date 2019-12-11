@@ -1,5 +1,23 @@
 #include "../../header/grid.h"
 
+char **allocate_2d_array(int dimension) {
+    char **array = (char **)malloc(dimension*sizeof(char *));
+    if( array == NULL) {
+        printf("allocate_2d_array: %s\n",strerror(errno));
+        exit(FAILURE);
+    }
+
+    for( int i = 0 ; i < dimension ; i++) {
+        array[i] = (char *)malloc(dimension*sizeof(char));
+        if( array[i] == NULL ) {
+            printf("allocate_2d_array: %s\n",strerror(errno));
+            exit(FAILURE);
+        }
+    }
+
+    return array;
+}
+
 struct grid *allocate_grid(int dimension, int number_of_processes) {
     struct grid *grid = (struct grid *)malloc(sizeof(struct grid));
     if( grid == NULL ) {
@@ -7,20 +25,7 @@ struct grid *allocate_grid(int dimension, int number_of_processes) {
         exit(FAILURE);
     }
 
-    grid->array = (char **)malloc(dimension*sizeof(char *));
-    if( grid->array == NULL) {
-        printf("allocate_grid: %s\n",strerror(errno));
-        exit(FAILURE);
-    }
-
-    for( int i = 0 ; i < dimension ; i++) {
-        grid->array[i] = (char *)malloc(dimension*sizeof(char));
-        if( grid->array[i] == NULL ) {
-            printf("allocate_grid: %s\n",strerror(errno));
-            exit(FAILURE);
-        }
-    }
-
+    grid->array = allocate_2d_array(dimension);
     grid->dimension = dimension;
     calculate_subgrid_dimension(&grid,number_of_processes);
     grid->process_grid_dimension = grid->dimension/grid->subgrid_dimension;
@@ -51,6 +56,14 @@ void initialize_grid_from_inputfile(struct grid **grid, char *inputfile) {
     }
     free(line);
     fclose(file_pointer);
+}
+
+void print_2d_array(char **array, int dimension) {
+    for( int i = 0 ; i < dimension ; i++ ) {
+        for( int j = 0 ; j < dimension ; j++ )
+            printf("%c",array[i][j]);
+        printf("\n");
+    }
 }
 
 void print_grid(struct grid *grid, char *filename) {
