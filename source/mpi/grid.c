@@ -96,9 +96,13 @@ void calculate_subgrid_dimension(struct grid **grid,int number_of_processes) {
         (*grid)->subgrid_dimension = ((*grid)->dimension / root);
 }
 
+void free_2d_array(char **array, int dimension) {
+    for( int i = 0 ; i < dimension ; i++ )
+        free(array[i]);
+    free(array);
+}
+
 void free_grid(struct grid **grid) {
-    for( int i = 0 ; i < (*grid)->dimension ; i++ )
-        free((*grid)->array[i]);
-    free((*grid)->array);
+    free_2d_array((*grid)->array, (*grid)->dimension);
     free((*grid));
 }

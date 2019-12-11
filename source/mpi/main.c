@@ -2,11 +2,12 @@
 #include "../../header/grid.h"
 #include "../../header/utilities.h"
 
-// mpiexec -n 4 ./game_of_life 
+// mpiexec -n 4 ./game_of_life -d 20 -i ../inputfiles/grid_20x20.csv -o
 
 int main( int argc, char **argv ) {
     int number_of_processes, rank_of_the_process;
     double local_start, local_end, local_elapsed, max_elapsed;
+    char **local_grid, **next_local_grid;
 
     srand(time(NULL));
     struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .loops = DEFAULT_LOOPS, .inputfile = DEFAULT_INPUTFILE, .output = DEFAULT_OUTPUT };
@@ -37,6 +38,10 @@ int main( int argc, char **argv ) {
         print_grid(grid,"output.csv");
     }
 
+    // allocate local grid and next local grid
+    local_grid = allocate_2d_array(grid->subgrid_dimension);
+    next_local_grid = allocate_2d_array(grid->subgrid_dimension);
+
     // stop Wtime and Profiling
     local_end = MPI_Wtime();
     MPI_Pcontrol(0);
@@ -48,6 +53,9 @@ int main( int argc, char **argv ) {
     if( rank_of_the_process == 0 )
         printf("Elapsed time = %f\n",max_elapsed);
 
+    
+    free_2d_array(local_grid,grid->subgrid_dimension);
+    free_2d_array(next_local_grid,grid->subgrid_dimension);
     free_grid(&grid);
     // finalize the MPI environment
     MPI_Finalize();
