@@ -4,6 +4,13 @@
 #include "./header.h"
 #include "./utilities.h"
 
+struct grid_side_dimensions {
+    char *top_dimension;
+    char *bottom_dimension;
+    char *left_dimension;
+    char *right_dimension;
+};
+
 struct grid {
     char **array;
     int dimension;
@@ -11,6 +18,7 @@ struct grid {
     int process_grid_dimension;
 };
 
+struct grid_side_dimensions *allocate_grid_side_dimensions(int );
 char **allocate_2d_array(int );
 struct grid *allocate_grid(int , int);
 void initialize_grid(struct grid **);
@@ -20,5 +28,6 @@ void print_grid(struct grid *, char *);
 void calculate_subgrid_dimension(struct grid **,int );
 void free_2d_array(char **, int );
 void free_grid(struct grid **);
+void free_grid_side_dimensions(struct grid_side_dimensions **);
 
 #endif

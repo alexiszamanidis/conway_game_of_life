@@ -1,5 +1,30 @@
 #include "../../header/grid.h"
 
+struct grid_side_dimensions *allocate_grid_side_dimensions(int dimension) {
+    struct grid_side_dimensions *grid_side_dimensions = (struct grid_side_dimensions *)malloc(sizeof(struct grid_side_dimensions));
+    grid_side_dimensions->top_dimension = (char *)malloc(dimension*sizeof(char));
+    if( grid_side_dimensions->top_dimension == NULL ) {
+        printf("allocate_grid_side_dimensions: %s\n",strerror(errno));
+        exit(FAILURE);
+    }
+    grid_side_dimensions->bottom_dimension = (char *)malloc(dimension*sizeof(char));
+    if( grid_side_dimensions->bottom_dimension == NULL ) {
+        printf("allocate_grid_side_dimensions: %s\n",strerror(errno));
+        exit(FAILURE);
+    }
+    grid_side_dimensions->left_dimension = (char *)malloc(dimension*sizeof(char));
+    if( grid_side_dimensions->left_dimension == NULL ) {
+        printf("allocate_grid_side_dimensions: %s\n",strerror(errno));
+        exit(FAILURE);
+    }
+    grid_side_dimensions->right_dimension = (char *)malloc(dimension*sizeof(char));
+    if( grid_side_dimensions->right_dimension == NULL ) {
+        printf("allocate_grid_side_dimensions: %s\n",strerror(errno));
+        exit(FAILURE);
+    }
+    return grid_side_dimensions;
+}
+
 char **allocate_2d_array(int dimension) {
     char **array = (char **)malloc(dimension*sizeof(char *));
     if( array == NULL) {
@@ -105,4 +130,12 @@ void free_2d_array(char **array, int dimension) {
 void free_grid(struct grid **grid) {
     free_2d_array((*grid)->array, (*grid)->dimension);
     free((*grid));
+}
+
+void free_grid_side_dimensions(struct grid_side_dimensions **grid_side_dimensions) {
+    free((*grid_side_dimensions)->top_dimension);
+    free((*grid_side_dimensions)->bottom_dimension);
+    free((*grid_side_dimensions)->left_dimension);
+    free((*grid_side_dimensions)->right_dimension);
+    free((*grid_side_dimensions));
 }

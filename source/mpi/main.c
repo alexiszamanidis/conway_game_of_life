@@ -10,6 +10,7 @@ int main( int argc, char **argv ) {
     char **local_grid, **next_local_grid;
     int periods[2]= {1,1}, dim[2], coords[2];
     struct neighbor_processes neighbor_processes;
+    struct grid_side_dimensions *grid_side_dimensions = NULL;
     srand(time(NULL));
     struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .loops = DEFAULT_LOOPS, .inputfile = DEFAULT_INPUTFILE, .output = DEFAULT_OUTPUT };
     parse_arguments(&arguments,argc,argv);
@@ -34,6 +35,9 @@ int main( int argc, char **argv ) {
     else
         initialize_grid_from_inputfile(&grid,arguments.inputfile);
 
+    // allocate grid side dimensions
+    grid_side_dimensions = allocate_grid_side_dimensions(grid->subgrid_dimension);
+
     // print array if the user gave -o output option
     if( (rank_of_the_process == 0) && (arguments.output == true) ) {
         print_arguments(arguments);
@@ -51,7 +55,7 @@ int main( int argc, char **argv ) {
 
     // determines process coords in cartesian topology given rank in group
     MPI_Cart_coords(comm, rank_of_the_process, 2, coords);
-    printf("rank = %d, coords[0] = %d, coords[1] = %d\n",rank_of_the_process,coords[0],coords[1]);
+//    printf("rank = %d, coords[0] = %d, coords[1] = %d\n",rank_of_the_process,coords[0],coords[1]);
 
     calculate_neighbor_coords_processes(&neighbor_processes,coords);
 
@@ -64,7 +68,7 @@ int main( int argc, char **argv ) {
     MPI_Cart_rank(comm, neighbor_processes.right_neighbor_coords, &neighbor_processes.right_neighbor_rank);
     MPI_Cart_rank(comm, neighbor_processes.left_neighbor_coords, &neighbor_processes.left_neighbor_rank);
 
-    print_neighbor_ranks(neighbor_processes,rank_of_the_process);
+//    print_neighbor_ranks(neighbor_processes,rank_of_the_process);
 
     // stop Wtime and Profiling
     local_end = MPI_Wtime();
@@ -77,6 +81,7 @@ int main( int argc, char **argv ) {
     if( rank_of_the_process == 0 )
         printf("Elapsed time = %f\n",max_elapsed);
     
+    free_grid_side_dimensions(&grid_side_dimensions);
     free_2d_array(local_grid,grid->subgrid_dimension);
     free_2d_array(next_local_grid,grid->subgrid_dimension);
     free_grid(&grid);
