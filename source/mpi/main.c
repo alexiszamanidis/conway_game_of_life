@@ -30,11 +30,12 @@ int main( int argc, char **argv ) {
 
     // allocate and initialize grid
     struct grid *grid = allocate_grid(arguments.dimension,number_of_processes);
-    if( strcmp(arguments.inputfile,"") == 0 )
-        initialize_grid(&grid);
-    else
-        initialize_grid_from_inputfile(&grid,arguments.inputfile);
-
+    if( rank_of_the_process == 0 ) {
+        if( strcmp(arguments.inputfile,"") == 0 )
+            initialize_grid(&grid);
+        else
+            initialize_grid_from_inputfile(&grid,arguments.inputfile);
+    }
     // allocate grid side dimensions
     grid_side_dimensions = allocate_grid_side_dimensions(grid->subgrid_dimension);
 
@@ -49,6 +50,20 @@ int main( int argc, char **argv ) {
     next_local_grid = allocate_2d_array(grid->subgrid_dimension);
     dim[0] = grid->process_grid_dimension;
     dim[1] = grid->process_grid_dimension;
+
+    MPI_Datatype block_1, block_2;
+    MPI_Type_vector(grid->subgrid_dimension, grid->subgrid_dimension, grid->dimension, MPI_CHAR, &block_2);
+    MPI_Type_create_resized(block_2, 0, sizeof(char), &block_1);
+    MPI_Type_commit(&block_1);
+
+    int sendcounts[(int)pow(grid->process_grid_dimension,2)],displs[(int)pow(grid->process_grid_dimension,2)];
+
+    // initialize sendcounts, displacements and scatter the grid
+    initialize_sendcounts_and_displs_for_scattering_the_grid(sendcounts,displs,grid);
+//    print_sendcounts_and_displs(sendcounts,displs,grid);
+    MPI_Scatterv(&(grid->array[0][0]), sendcounts, displs, block_1, &local_grid[0][0], grid->subgrid_dimension*grid->subgrid_dimension, MPI_CHAR, 0, MPI_COMM_WORLD);
+
+    print_2d_array(local_grid,grid->subgrid_dimension,rank_of_the_process);
     
     MPI_Comm comm;
     MPI_Cart_create(MPI_COMM_WORLD, 2, dim, periods, reorder, &comm);
@@ -72,8 +87,8 @@ int main( int argc, char **argv ) {
 
     MPI_Request request;
     MPI_Datatype columns;
-	MPI_Type_vector(grid->subgrid_dimension, 1, grid->subgrid_dimension, MPI_CHAR, &columns);
-	MPI_Type_commit(&columns);
+    MPI_Type_vector(grid->subgrid_dimension, 1, grid->subgrid_dimension, MPI_CHAR, &columns);
+    MPI_Type_commit(&columns);
 
     for(  int i = 0 ; i < arguments.loops ; i++) {
         if( (rank_of_the_process == 0) && (arguments.output == true) ) {
@@ -85,9 +100,9 @@ int main( int argc, char **argv ) {
         MPI_Isend(&local_grid[0][0], 1, columns, neighbor_processes.left_neighbor_rank, 0,MPI_COMM_WORLD, &request);
         MPI_Isend(&local_grid[0][grid->subgrid_dimension-1], 1, columns, neighbor_processes.right_neighbor_rank, 0, MPI_COMM_WORLD, &request);
         MPI_Isend(&local_grid[0][0], 1, MPI_CHAR, neighbor_processes.top_left_neighbor_rank, 0,MPI_COMM_WORLD, &request);
-		MPI_Isend(&local_grid[0][grid->subgrid_dimension-1], 1, MPI_CHAR, neighbor_processes.top_right_neighbor_rank, 0, MPI_COMM_WORLD, &request);
-		MPI_Isend(&local_grid[grid->subgrid_dimension-1][0], 1, MPI_CHAR, neighbor_processes.bottom_left_neighbor_rank, 0,MPI_COMM_WORLD, &request);
-		MPI_Isend(&local_grid[grid->subgrid_dimension-1][grid->subgrid_dimension-1],1, MPI_CHAR, neighbor_processes.bottom_right_neighbor_rank, 0, MPI_COMM_WORLD, &request);
+        MPI_Isend(&local_grid[0][grid->subgrid_dimension-1], 1, MPI_CHAR, neighbor_processes.top_right_neighbor_rank, 0, MPI_COMM_WORLD, &request);
+        MPI_Isend(&local_grid[grid->subgrid_dimension-1][0], 1, MPI_CHAR, neighbor_processes.bottom_left_neighbor_rank, 0,MPI_COMM_WORLD, &request);
+        MPI_Isend(&local_grid[grid->subgrid_dimension-1][grid->subgrid_dimension-1],1, MPI_CHAR, neighbor_processes.bottom_right_neighbor_rank, 0, MPI_COMM_WORLD, &request);
     }
 
     // stop Wtime and Profiling
@@ -102,9 +117,10 @@ int main( int argc, char **argv ) {
         printf("Elapsed time = %f\n",max_elapsed);
     
     free_grid_side_dimensions(&grid_side_dimensions);
-    free_2d_array(local_grid,grid->subgrid_dimension);
-    free_2d_array(next_local_grid,grid->subgrid_dimension);
-    free_grid(&grid);
+    free_2d_array(&local_grid);
+    free_2d_array(&next_local_grid);
+    if( rank_of_the_process == 0 )
+        free_grid(&grid);
     // finalize the MPI environment
     MPI_Finalize();
 

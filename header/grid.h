@@ -31,5 +31,7 @@ void calculate_subgrid_dimension(struct grid **,int );
 void free_2d_array(char ***);
 void free_grid(struct grid **);
 void free_grid_side_dimensions(struct grid_side_dimensions **);
+void initialize_sendcounts_and_displs_for_scattering_the_grid(int *, int *, struct grid * );
+void print_sendcounts_and_displs(int *, int *, struct grid *);
 
 #endif

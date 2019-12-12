@@ -27,22 +27,22 @@ struct grid_side_dimensions *allocate_grid_side_dimensions(int dimension) {
 
 char **allocate_2d_array(int dimension) {
     // allocate the rows
-	char **array = (char **) malloc(dimension * sizeof(char*));
-	if (array == NULL) {
-		printf("allocate_2d_array: %s\n",strerror(errno));
+    char **array = (char **) malloc(dimension * sizeof(char*));
+    if (array == NULL) {
+        printf("allocate_2d_array: %s\n",strerror(errno));
         exit(FAILURE);
-	}
+    }
     
     // allocate all array elements => contiguous allocation
     char *allocate_all_array_elements = (char *) malloc(dimension * dimension * sizeof(char));
-	if (allocate_all_array_elements == NULL) {
-		printf("allocate_2d_array: %s\n",strerror(errno));
+    if (allocate_all_array_elements == NULL) {
+        printf("allocate_2d_array: %s\n",strerror(errno));
         exit(FAILURE);
-	}
+    }
 
-	// fix array rows
-	for (int i = 0; i < dimension; i++)
-		array[i] = &(allocate_all_array_elements[i * dimension]);
+    // fix array rows
+    for (int i = 0; i < dimension; i++)
+        array[i] = &(allocate_all_array_elements[i * dimension]);
 
     return array;
 }
@@ -109,7 +109,7 @@ void print_grid(struct grid *grid, char *filename) {
         printf("print_grid: %s\n",strerror(errno));
         exit(FAILURE);
     }
-    fprintf(file_pointer, "Dimension = %d, Subgrid dimension = %d, Process grid dimension = %d \n",grid->dimension, grid->subgrid_dimension, grid->process_grid_dimension);
+//    fprintf(file_pointer, "Dimension = %d, Subgrid dimension = %d, Process grid dimension = %d \n",grid->dimension, grid->subgrid_dimension, grid->process_grid_dimension);
     for( int i = 0 ; i < grid->dimension ; i++ ) {
         for( int j = 0 ; j < grid->dimension ; j++ )
             fprintf(file_pointer, "%c",grid->array[i][j]);
@@ -149,4 +149,28 @@ void free_grid_side_dimensions(struct grid_side_dimensions **grid_side_dimension
     free((*grid_side_dimensions)->left_dimension);
     free((*grid_side_dimensions)->right_dimension);
     free((*grid_side_dimensions));
+}
+
+void initialize_sendcounts_and_displs_for_scattering_the_grid(int *sendcounts, int *displs, struct grid *grid) {
+    for (int i = 0; i < grid->process_grid_dimension; i++)
+        for (int j = 0; j < grid->process_grid_dimension; j++) {
+            int index = i * grid->process_grid_dimension + j;
+            sendcounts[index] = 1;
+            displs[index] = (i*grid->dimension*grid->subgrid_dimension) + (j*grid->subgrid_dimension);
+        }
+}
+
+void print_sendcounts_and_displs(int *sendcounts, int *displs, struct grid *grid) {
+    for (int i = 0; i < grid->process_grid_dimension; i++)
+        for (int j = 0; j < grid->process_grid_dimension; j++) {
+            int index = i * grid->process_grid_dimension + j;
+            printf("%d ",sendcounts[index]);
+        }
+    printf("\n");
+    for (int i = 0; i < grid->process_grid_dimension; i++)
+        for (int j = 0; j < grid->process_grid_dimension; j++) {
+            int index = i * grid->process_grid_dimension + j;
+            printf("%d ",displs[index]);
+        }
+    printf("\n");
 }
