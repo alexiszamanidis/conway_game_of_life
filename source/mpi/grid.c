@@ -26,19 +26,23 @@ struct grid_side_dimensions *allocate_grid_side_dimensions(int dimension) {
 }
 
 char **allocate_2d_array(int dimension) {
-    char **array = (char **)malloc(dimension*sizeof(char *));
-    if( array == NULL) {
-        printf("allocate_2d_array: %s\n",strerror(errno));
+    // allocate the rows
+	char **array = (char **) malloc(dimension * sizeof(char*));
+	if (array == NULL) {
+		printf("allocate_2d_array: %s\n",strerror(errno));
         exit(FAILURE);
-    }
+	}
+    
+    // allocate all array elements => contiguous allocation
+    char *allocate_all_array_elements = (char *) malloc(dimension * dimension * sizeof(char));
+	if (allocate_all_array_elements == NULL) {
+		printf("allocate_2d_array: %s\n",strerror(errno));
+        exit(FAILURE);
+	}
 
-    for( int i = 0 ; i < dimension ; i++) {
-        array[i] = (char *)malloc(dimension*sizeof(char));
-        if( array[i] == NULL ) {
-            printf("allocate_2d_array: %s\n",strerror(errno));
-            exit(FAILURE);
-        }
-    }
+	// fix array rows
+	for (int i = 0; i < dimension; i++)
+		array[i] = &(allocate_all_array_elements[i * dimension]);
 
     return array;
 }
@@ -83,12 +87,20 @@ void initialize_grid_from_inputfile(struct grid **grid, char *inputfile) {
     fclose(file_pointer);
 }
 
-void print_2d_array(char **array, int dimension) {
+void print_2d_array(char **array, int dimension, int rank) {
+    char filename[100];
+    snprintf(filename, 256, "process_%d", rank);
+    FILE *file_pointer = fopen(filename, "w+");
+    if ( file_pointer == NULL ) {
+        printf("print_grid: %s\n",strerror(errno));
+        exit(FAILURE);
+    }
     for( int i = 0 ; i < dimension ; i++ ) {
         for( int j = 0 ; j < dimension ; j++ )
-            printf("%c",array[i][j]);
-        printf("\n");
+            fprintf(file_pointer, "%c", array[i][j]);
+        fprintf(file_pointer, "\n");
     }
+    fclose(file_pointer);
 }
 
 void print_grid(struct grid *grid, char *filename) {
@@ -121,14 +133,13 @@ void calculate_subgrid_dimension(struct grid **grid,int number_of_processes) {
         (*grid)->subgrid_dimension = ((*grid)->dimension / root);
 }
 
-void free_2d_array(char **array, int dimension) {
-    for( int i = 0 ; i < dimension ; i++ )
-        free(array[i]);
-    free(array);
+void free_2d_array(char ***array) {
+    free(&(array[0][0]));
+    free(*array);
 }
 
 void free_grid(struct grid **grid) {
-    free_2d_array((*grid)->array, (*grid)->dimension);
+    free_2d_array(&(*grid)->array);
     free((*grid));
 }
 
