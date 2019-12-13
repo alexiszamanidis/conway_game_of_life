@@ -1,12 +1,14 @@
 ## Table of Contents
 
-* [Conway's game of life](https://github.com/ZamanidisAlexios/conway_game_of_life#conway's-game-of-life)
+* [Conway's game of life](https://github.com/ZamanidisAlexios/conway_game_of_life#conways-game-of-life)
 
   * [Rules](https://github.com/ZamanidisAlexios/conway_game_of_life#rules)
 
   * [Mpi implementation](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-implementation)
 
     * [Grid](https://github.com/ZamanidisAlexios/conway_game_of_life#grid)
+
+    * [Scattering](https://github.com/ZamanidisAlexios/conway_game_of_life#scattering)
 
 # Conway's game of life
 
@@ -35,4 +37,10 @@ Then, each process allocates a structure grid side dimensions, local_grid and ne
 
 ## Scattering
 
-After basic stucture allocation, we scatter the grid and we initialize all local grids. Example, if we have 4 processes and the grid is 20x20, we will have:
+After basic stucture allocation, we scatter the grid and we initialize all local grids. Example, if we have 4 processes, we will have:
+
+![scattering](https://user-images.githubusercontent.com/48658768/70816300-de1f7880-1dd7-11ea-9dbb-22685ad61715.png)
+
+Another view of scattering with contiguous allocation:
+
+![contiguous_scattering](https://user-images.githubusercontent.com/48658768/70816363-04451880-1dd8-11ea-9ba5-672ca092dab9.png)
