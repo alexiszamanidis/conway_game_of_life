@@ -28,3 +28,5 @@ First of all, we pasre user's arguments, then we parse the number of processes b
 ### Grid
 
 After, process with rank equal to 0 allocates and initializes the global grid. The grid is a 2d array of characters. Characters have two values, the one is the dot(.) and the other is the star(*). Star means that the cell is alive and dot means that the cell is dead. We allocate the 2d grid contiguously, which means:
+
+![grid_allocation](https://user-images.githubusercontent.com/48658768/70812965-5898ca00-1dd1-11ea-893a-3ad410c0b58d.png)
