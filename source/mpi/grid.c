@@ -22,6 +22,7 @@ struct grid_side_dimensions *allocate_grid_side_dimensions(int dimension) {
         printf("allocate_grid_side_dimensions: %s\n",strerror(errno));
         exit(FAILURE);
     }
+
     return grid_side_dimensions;
 }
 
@@ -134,11 +135,15 @@ void calculate_subgrid_dimension(struct grid **grid,int number_of_processes) {
 }
 
 void free_2d_array(char ***array) {
-    free(&(array[0][0]));
+    if( *array == NULL)
+        return;
+    free(&((*array)[0][0]));
     free(*array);
 }
 
 void free_grid(struct grid **grid) {
+    if( *grid == NULL)
+        return;
     free_2d_array(&(*grid)->array);
     free((*grid));
 }
@@ -172,5 +177,28 @@ void print_sendcounts_and_displs(int *sendcounts, int *displs, struct grid *grid
             int index = i * grid->process_grid_dimension + j;
             printf("%d ",displs[index]);
         }
+    printf("\n");
+}
+
+void print_grid_side_dimensions(struct grid_side_dimensions *grid_side_dimensions, int dimension, int rank_of_the_process) {
+    printf("rank = %d\n",rank_of_the_process);
+    for( int i = 0 ; i < dimension ; i++)
+        printf("%c ",grid_side_dimensions->top_dimension[i]);
+    printf("\n");
+    for( int i = 0 ; i < dimension ; i++)
+        printf("%c ",grid_side_dimensions->bottom_dimension[i]);
+    printf("\n");
+    for( int i = 0 ; i < dimension ; i++)
+        printf("%c ",grid_side_dimensions->left_dimension[i]);
+    printf("\n");
+    for( int i = 0 ; i < dimension ; i++)
+        printf("%c ",grid_side_dimensions->right_dimension[i]);
+    printf("\n");
+    printf("%c %c %c %c\n",grid_side_dimensions->top_left,grid_side_dimensions->top_right,grid_side_dimensions->bottom_left,grid_side_dimensions->bootom_right);
+}
+
+void print_1d_array(char *array, int dimension) {
+    for( int i = 0 ; i < dimension ; i++)
+        printf("%c ",array[i]);
     printf("\n");
 }
