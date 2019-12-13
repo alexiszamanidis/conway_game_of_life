@@ -36,20 +36,19 @@ int main( int argc, char **argv ) {
         else
             initialize_grid_from_inputfile(&grid,arguments.inputfile);
     }
-    // allocate grid side dimensions
+
+    // allocate grid side dimensions,local grid, next local grid and initialize dim for mpi cart
     grid_side_dimensions = allocate_grid_side_dimensions(grid->subgrid_dimension);
+    local_grid = allocate_2d_array(grid->subgrid_dimension);
+    next_local_grid = allocate_2d_array(grid->subgrid_dimension);
+    dim[0] = grid->process_grid_dimension;
+    dim[1] = grid->process_grid_dimension;
 
     // print array if the user gave -o output option
     if( (rank_of_the_process == 0) && (arguments.output == true) ) {
     //    print_arguments(arguments);
         print_grid(grid,"output.csv");
     }
-
-    // allocate local grid, next local grid and initialize dim for mpi cart
-    local_grid = allocate_2d_array(grid->subgrid_dimension);
-    next_local_grid = allocate_2d_array(grid->subgrid_dimension);
-    dim[0] = grid->process_grid_dimension;
-    dim[1] = grid->process_grid_dimension;
 
     MPI_Datatype block_1, block_2;
     MPI_Type_vector(grid->subgrid_dimension, grid->subgrid_dimension, grid->dimension, MPI_CHAR, &block_2);

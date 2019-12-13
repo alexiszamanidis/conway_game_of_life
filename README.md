@@ -4,7 +4,7 @@
 
   * [Rules](https://github.com/ZamanidisAlexios/conway_game_of_life#rules)
 
-  * [Implementation](https://github.com/ZamanidisAlexios/conway_game_of_life#implementation)
+  * [Mpi implementation](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-implementation)
 
     * [Grid](https://github.com/ZamanidisAlexios/conway_game_of_life#grid)
 
@@ -21,7 +21,7 @@ The universe of the Game of Life is an infinite, two-dimensional orthogonal grid
 3. Any live cell with more than three live neighbours dies, as if by overpopulation.
 4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
-## Implementation
+## Mpi implementation
 
 First of all, we pasre user's arguments, then we parse the number of processes because we want them to be a perfect square and the root to divide the global grid dimension with no remaining balance.
 
@@ -30,3 +30,9 @@ First of all, we pasre user's arguments, then we parse the number of processes b
 After, process with rank equal to 0 allocates and initializes the global grid. The grid is a 2d array of characters. Characters have two values, the one is the dot(.) and the other is the star(*). Star means that the cell is alive and dot means that the cell is dead. We allocate the 2d grid contiguously, which means:
 
 ![grid_allocation](https://user-images.githubusercontent.com/48658768/70812965-5898ca00-1dd1-11ea-893a-3ad410c0b58d.png)
+
+Then, each process allocates a structure grid side dimensions, local_grid and next_local_grid. Structure grid side dimensions is used for saving the outline elements of the grid. Local grid and next local grid are just 2d arrays of characters and their allocation is the same as the global grid.
+
+## Scattering
+
+After basic stucture allocation, we scatter the grid and we initialize all local grids. Example, if we have 4 processes and the grid is 20x20, we will have:
