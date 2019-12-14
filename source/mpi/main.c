@@ -112,10 +112,10 @@ int main( int argc, char **argv ) {
         MPI_Irecv(grid_side_dimensions->bottom_dimension, local_grid->dimension, MPI_CHAR, neighbor_processes.bottom_neighbor_rank, 0,MPI_COMM_WORLD, &request[9]);
         MPI_Irecv(grid_side_dimensions->left_dimension, local_grid->dimension, MPI_CHAR, neighbor_processes.left_neighbor_rank, 0,MPI_COMM_WORLD, &request[10]);
         MPI_Irecv(grid_side_dimensions->right_dimension, local_grid->dimension, MPI_CHAR, neighbor_processes.right_neighbor_rank, 0,MPI_COMM_WORLD, &request[11]);
-        MPI_Irecv(&grid_side_dimensions->top_left, 1, MPI_CHAR, neighbor_processes.top_left_neighbor_rank, 0, MPI_COMM_WORLD, &request[12]);
-        MPI_Irecv(&grid_side_dimensions->top_right, 1, MPI_CHAR, neighbor_processes.top_right_neighbor_rank, 0, MPI_COMM_WORLD, &request[13]);
-        MPI_Irecv(&grid_side_dimensions->bottom_left, 1, MPI_CHAR, neighbor_processes.bottom_left_neighbor_rank, 0, MPI_COMM_WORLD, &request[14]);
-        MPI_Irecv(&grid_side_dimensions->bootom_right, 1, MPI_CHAR, neighbor_processes.bottom_right_neighbor_rank, 0, MPI_COMM_WORLD, &request[15]);
+        MPI_Irecv(&grid_side_dimensions->top_left_corner, 1, MPI_CHAR, neighbor_processes.top_left_neighbor_rank, 0, MPI_COMM_WORLD, &request[12]);
+        MPI_Irecv(&grid_side_dimensions->top_right_corner, 1, MPI_CHAR, neighbor_processes.top_right_neighbor_rank, 0, MPI_COMM_WORLD, &request[13]);
+        MPI_Irecv(&grid_side_dimensions->bottom_left_corner, 1, MPI_CHAR, neighbor_processes.bottom_left_neighbor_rank, 0, MPI_COMM_WORLD, &request[14]);
+        MPI_Irecv(&grid_side_dimensions->bottom_right_corner, 1, MPI_CHAR, neighbor_processes.bottom_right_neighbor_rank, 0, MPI_COMM_WORLD, &request[15]);
         
         // calculate intermidiate elements
         for( int i = 1 ; i < local_grid->dimension-1 ; i++ ) {
@@ -132,44 +132,70 @@ int main( int argc, char **argv ) {
         // wait for all given communications to complete
         MPI_Waitall(16, request, status);
         
-        if( rank_of_the_process == 0 ) {
-            print_grid_side_dimensions(grid_side_dimensions,local_grid->dimension,rank_of_the_process);
-            // calculate outline elements
-            for( int i = 1 ; i < local_grid->dimension-1 ; i++ ) {
-                // top dimension: sum all alive neighbours
-                neighbours = (local_grid->array[0][i-1]-'0')+(local_grid->array[0][i+1]-'0')
-                            +(local_grid->array[1][i-1]-'0')+(local_grid->array[1][i]-'0')+(local_grid->array[1][i+1]-'0')
-                            +(grid_side_dimensions->top_dimension[i-1]-'0')+(grid_side_dimensions->top_dimension[i]-'0')+(grid_side_dimensions->top_dimension[i+1]-'0');
-            //    printf("%c %d ",local_grid->array[0][i],neighbours);
-                // apply the rules and create next generation grid
-                next_local_grid->array[0][i] = apply_rules(local_grid->array[0][i],neighbours);
+    //    print_grid_side_dimensions(grid_side_dimensions,local_grid->dimension,rank_of_the_process);
+        // calculate outline elements
+        for( int i = 1 ; i < local_grid->dimension-1 ; i++ ) {
+            // top dimension: sum all alive neighbours
+            neighbours = (local_grid->array[0][i-1]-'0')+(local_grid->array[0][i+1]-'0')
+                        +(local_grid->array[1][i-1]-'0')+(local_grid->array[1][i]-'0')+(local_grid->array[1][i+1]-'0')
+                        +(grid_side_dimensions->top_dimension[i-1]-'0')+(grid_side_dimensions->top_dimension[i]-'0')+(grid_side_dimensions->top_dimension[i+1]-'0');
+            // apply the rules and create next generation grid
+            next_local_grid->array[0][i] = apply_rules(local_grid->array[0][i],neighbours);
 
-                // bottom dimension: sum all alive neighbours
-                neighbours = (local_grid->array[last][i-1]-'0')+(local_grid->array[last][i+1]-'0')
-                            +(local_grid->array[last-1][i-1]-'0')+(local_grid->array[last-1][i]-'0')+(local_grid->array[last-1][i+1]-'0')
-                            +(grid_side_dimensions->bottom_dimension[i-1]-'0')+(grid_side_dimensions->bottom_dimension[i]-'0')+(grid_side_dimensions->bottom_dimension[i+1]-'0');
-            //    printf("%c %d ",local_grid->array[last][i],neighbours);
-                // apply the rules and create next generation grid
-                next_local_grid->array[last][i] = apply_rules(local_grid->array[last][i],neighbours);
+            // bottom dimension: sum all alive neighbours
+            neighbours = (local_grid->array[last][i-1]-'0')+(local_grid->array[last][i+1]-'0')
+                        +(local_grid->array[last-1][i-1]-'0')+(local_grid->array[last-1][i]-'0')+(local_grid->array[last-1][i+1]-'0')
+                        +(grid_side_dimensions->bottom_dimension[i-1]-'0')+(grid_side_dimensions->bottom_dimension[i]-'0')+(grid_side_dimensions->bottom_dimension[i+1]-'0');
+            // apply the rules and create next generation grid
+            next_local_grid->array[last][i] = apply_rules(local_grid->array[last][i],neighbours);
 
-                // left dimension: sum all alive neighbours
-                neighbours = (local_grid->array[i-1][0]-'0')+(local_grid->array[i+1][0]-'0')
-                            +(local_grid->array[i-1][1]-'0')+(local_grid->array[i][1]-'0')+(local_grid->array[i+1][1]-'0')
-                            +(grid_side_dimensions->left_dimension[i-1]-'0')+(grid_side_dimensions->left_dimension[i]-'0')+(grid_side_dimensions->left_dimension[i+1]-'0');
-            //    printf("%c %d ",local_grid->array[i][0],neighbours);
-                // apply the rules and create next generation grid
-                next_local_grid->array[i][0] = apply_rules(local_grid->array[i][0],neighbours);
+            // left dimension: sum all alive neighbours
+            neighbours = (local_grid->array[i-1][0]-'0')+(local_grid->array[i+1][0]-'0')
+                        +(local_grid->array[i-1][1]-'0')+(local_grid->array[i][1]-'0')+(local_grid->array[i+1][1]-'0')
+                        +(grid_side_dimensions->left_dimension[i-1]-'0')+(grid_side_dimensions->left_dimension[i]-'0')+(grid_side_dimensions->left_dimension[i+1]-'0');
+            // apply the rules and create next generation grid
+            next_local_grid->array[i][0] = apply_rules(local_grid->array[i][0],neighbours);
 
-                // right dimension: sum all alive neighbours
-                neighbours = (local_grid->array[i-1][last]-'0')+(local_grid->array[i+1][last]-'0')
-                            +(local_grid->array[i-1][last-1]-'0')+(local_grid->array[i][last-1]-'0')+(local_grid->array[i+1][last-1]-'0')
-                            +(grid_side_dimensions->right_dimension[i-1]-'0')+(grid_side_dimensions->right_dimension[i]-'0')+(grid_side_dimensions->right_dimension[i+1]-'0');
-            //    printf("%c %d \n",local_grid->array[i][last],neighbours);
-                // apply the rules and create next generation grid
-                next_local_grid->array[i][last] = apply_rules(local_grid->array[i][last],neighbours);
-            }
-            print_grid(next_local_grid, rank_of_the_process, "next_local_grid2", generation);
+            // right dimension: sum all alive neighbours
+            neighbours = (local_grid->array[i-1][last]-'0')+(local_grid->array[i+1][last]-'0')
+                        +(local_grid->array[i-1][last-1]-'0')+(local_grid->array[i][last-1]-'0')+(local_grid->array[i+1][last-1]-'0')
+                        +(grid_side_dimensions->right_dimension[i-1]-'0')+(grid_side_dimensions->right_dimension[i]-'0')+(grid_side_dimensions->right_dimension[i+1]-'0');
+            // apply the rules and create next generation grid
+            next_local_grid->array[i][last] = apply_rules(local_grid->array[i][last],neighbours);
         }
+        // top left corner cell: sum all alive neighbours
+        neighbours = (local_grid->array[0][1]-'0')+(local_grid->array[1][0]-'0')+(local_grid->array[1][1]-'0')
+                    +(grid_side_dimensions->top_dimension[0]-'0')+(grid_side_dimensions->top_dimension[1]-'0')
+                    +(grid_side_dimensions->left_dimension[0]-'0')+(grid_side_dimensions->left_dimension[1]-'0')
+                    +(grid_side_dimensions->top_left_corner-'0');
+        // apply the rules and create next generation grid
+        next_local_grid->array[0][0] = apply_rules(local_grid->array[0][0],neighbours);
+
+        // top right corner cell: sum all alive neighbours
+        neighbours = (local_grid->array[0][last-1]-'0')+(local_grid->array[1][last]-'0')+(local_grid->array[1][last-1]-'0')
+                    +(grid_side_dimensions->top_dimension[last]-'0')+(grid_side_dimensions->top_dimension[last-1]-'0')
+                    +(grid_side_dimensions->right_dimension[0]-'0')+(grid_side_dimensions->right_dimension[1]-'0')
+                    +(grid_side_dimensions->top_right_corner-'0');
+        // apply the rules and create next generation grid
+        next_local_grid->array[0][last] = apply_rules(local_grid->array[0][last],neighbours);
+
+        // bottom left corner cell: sum all alive neighbours
+        neighbours = (local_grid->array[last-1][0]-'0')+(local_grid->array[last-1][1]-'0')+(local_grid->array[last][1]-'0')
+                    +(grid_side_dimensions->bottom_dimension[0]-'0')+(grid_side_dimensions->bottom_dimension[1]-'0')
+                    +(grid_side_dimensions->left_dimension[last]-'0')+(grid_side_dimensions->left_dimension[last-1]-'0')
+                    +(grid_side_dimensions->bottom_left_corner-'0');
+        // apply the rules and create next generation grid
+        
+        next_local_grid->array[last][0] = apply_rules(local_grid->array[last][0],neighbours);
+        // bottom right corner cell: sum all alive neighbours
+        neighbours = (local_grid->array[last-1][last]-'0')+(local_grid->array[last-1][last-1]-'0')+(local_grid->array[last][last-1]-'0')
+                    +(grid_side_dimensions->bottom_dimension[last]-'0')+(grid_side_dimensions->bottom_dimension[last-1]-'0')
+                    +(grid_side_dimensions->right_dimension[last]-'0')+(grid_side_dimensions->right_dimension[last-1]-'0')
+                    +(grid_side_dimensions->bottom_right_corner-'0');
+        // apply the rules and create next generation grid
+        next_local_grid->array[last][last] = apply_rules(local_grid->array[last][last],neighbours);
+
+        print_grid(next_local_grid, rank_of_the_process, "next_local_grid2", generation);
     }
 
     // stop Wtime and Profiling

@@ -155,20 +155,19 @@ void print_sendcounts_and_displs(int *sendcounts, int *displs, int process_grid_
 }
 
 void print_grid_side_dimensions(struct grid_side_dimensions *grid_side_dimensions, int dimension, int rank_of_the_process) {
-    printf("rank = %d\n",rank_of_the_process);
+    printf("rank = %d\nT-side:",rank_of_the_process);
     for( int i = 0 ; i < dimension ; i++)
         printf("%c ",grid_side_dimensions->top_dimension[i]);
-    printf("\n");
+    printf("\nB-side:");
     for( int i = 0 ; i < dimension ; i++)
         printf("%c ",grid_side_dimensions->bottom_dimension[i]);
-    printf("\n");
+    printf("\nL-side:");
     for( int i = 0 ; i < dimension ; i++)
         printf("%c ",grid_side_dimensions->left_dimension[i]);
-    printf("\n");
+    printf("\nR-side:");
     for( int i = 0 ; i < dimension ; i++)
         printf("%c ",grid_side_dimensions->right_dimension[i]);
-    printf("\n");
-    printf("%c %c %c %c\n",grid_side_dimensions->top_left,grid_side_dimensions->top_right,grid_side_dimensions->bottom_left,grid_side_dimensions->bootom_right);
+    printf("\nTL:%c TR:%c BL:%c BR:%c\n",grid_side_dimensions->top_left_corner,grid_side_dimensions->top_right_corner,grid_side_dimensions->bottom_left_corner,grid_side_dimensions->bottom_right_corner);
 }
 
 void print_1d_array(char *array, int dimension) {
