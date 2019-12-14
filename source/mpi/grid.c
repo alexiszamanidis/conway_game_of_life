@@ -29,18 +29,18 @@ struct grid_side_dimensions *allocate_grid_side_dimensions(int dimension) {
 char **allocate_2d_array(int dimension) {
     // allocate the rows
     char **array = (char **) malloc(dimension * sizeof(char*));
-    if (array == NULL) {
+    if(array == NULL) {
         printf("allocate_2d_array: %s\n",strerror(errno));
         exit(FAILURE);
     }
     
     // allocate all array elements => contiguous allocation
     char *allocate_all_array_elements = (char *) malloc(dimension * dimension * sizeof(char));
-    if (allocate_all_array_elements == NULL) {
+    if(allocate_all_array_elements == NULL) {
         printf("allocate_2d_array: %s\n",strerror(errno));
         exit(FAILURE);
     }
-
+    memset(allocate_all_array_elements, 'A',dimension * dimension * sizeof(char));
     // fix array rows
     for (int i = 0; i < dimension; i++)
         array[i] = &(allocate_all_array_elements[i * dimension]);
@@ -72,7 +72,7 @@ void initialize_grid(struct grid **grid) {
 
 void initialize_grid_from_inputfile(struct grid **grid, char *inputfile) {
     FILE *file_pointer = fopen(inputfile, "r");
-    if ( file_pointer == NULL ) {
+    if( file_pointer == NULL ) {
         printf("initialize_grid_from_inputfile: %s\n",strerror(errno));
         exit(FAILURE);
     }
@@ -88,11 +88,11 @@ void initialize_grid_from_inputfile(struct grid **grid, char *inputfile) {
     fclose(file_pointer);
 }
 
-void print_2d_array(char **array, int dimension, int rank) {
-    char filename[100];
-    snprintf(filename, 256, "process_%d", rank);
+void print_2d_array(char **array, int dimension, int rank, char *grid_name, int generation) {
+    char filename[200];
+    snprintf(filename, 200, "process_%s_%d_%d",grid_name,rank,generation);
     FILE *file_pointer = fopen(filename, "w+");
-    if ( file_pointer == NULL ) {
+    if( file_pointer == NULL ) {
         printf("print_grid: %s\n",strerror(errno));
         exit(FAILURE);
     }
@@ -106,7 +106,7 @@ void print_2d_array(char **array, int dimension, int rank) {
 
 void print_grid(struct grid *grid, char *filename) {
     FILE *file_pointer = fopen(filename, "w+");
-    if ( file_pointer == NULL ) {
+    if( file_pointer == NULL ) {
         printf("print_grid: %s\n",strerror(errno));
         exit(FAILURE);
     }
