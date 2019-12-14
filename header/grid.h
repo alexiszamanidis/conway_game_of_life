@@ -25,15 +25,15 @@ char **allocate_2d_array(int );
 struct grid *allocate_grid(int , int);
 void initialize_grid(struct grid **);
 void initialize_grid_from_inputfile(struct grid **, char *);
+void initialize_sendcounts_and_displs_for_scattering_the_grid(int *, int *, struct grid * );
+void calculate_subgrid_dimension(struct grid **,int );
 void print_2d_array(char **, int, int, char *, int);
 void print_grid(struct grid *, char *);
-void calculate_subgrid_dimension(struct grid **,int );
-void free_2d_array(char ***);
-void free_grid(struct grid **);
-void free_grid_side_dimensions(struct grid_side_dimensions **);
-void initialize_sendcounts_and_displs_for_scattering_the_grid(int *, int *, struct grid * );
 void print_sendcounts_and_displs(int *, int *, struct grid *);
 void print_grid_side_dimensions(struct grid_side_dimensions *, int , int);
 void print_1d_array(char *, int );
+void free_2d_array(char ***);
+void free_grid(struct grid **);
+void free_grid_side_dimensions(struct grid_side_dimensions **);
 
 #endif
