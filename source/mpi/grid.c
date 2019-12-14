@@ -122,23 +122,9 @@ char apply_rules(char state, int neighbours) {
         return state;
 }
 
-void print_2d_array(char **array, int dimension, int rank, char *grid_name, int generation) {
+void print_grid(struct grid *grid, int rank, char *grid_name, int generation) {
     char filename[200];
-    snprintf(filename, 200, "process_%s_%d_%d.csv",grid_name,rank,generation);
-    FILE *file_pointer = fopen(filename, "w+");
-    if( file_pointer == NULL ) {
-        printf("print_grid: %s\n",strerror(errno));
-        exit(FAILURE);
-    }
-    for( int i = 0 ; i < dimension ; i++ ) {
-        for( int j = 0 ; j < dimension ; j++ )
-            fprintf(file_pointer, "%c", array[i][j]);
-        fprintf(file_pointer, "\n");
-    }
-    fclose(file_pointer);
-}
-
-void print_grid(struct grid *grid, char *filename) {
+    snprintf(filename, 200, "%s_r%d_g%d.csv",grid_name,rank,generation);
     FILE *file_pointer = fopen(filename, "w+");
     if( file_pointer == NULL ) {
         printf("print_grid: %s\n",strerror(errno));

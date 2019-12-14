@@ -55,7 +55,7 @@ dkms.conf
 .vscode
 
 # output
-output.csv
-process_*
+*.csv
+
 # executable
 game_of_life

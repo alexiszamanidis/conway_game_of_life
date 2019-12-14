@@ -33,7 +33,7 @@ After, process with rank equal to 0 allocates and initializes the global grid. T
 
 ![grid_allocation](https://user-images.githubusercontent.com/48658768/70812965-5898ca00-1dd1-11ea-893a-3ad410c0b58d.png)
 
-Then, each process allocates a structure grid side dimensions, local_grid and next_local_grid. Structure grid side dimensions is used for saving the outline elements of the grid. Local grid and next local grid are just 2d arrays of characters and their allocation is the same as the global grid.
+Then, each process allocates a structure grid side dimensions, local_grid and next_local_grid. Structure grid side dimensions is used for saving the outline elements of the grid. Local grid and next local grid are used for saving current generation and next generation cells.
 
 ## Scattering
 

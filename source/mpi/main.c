@@ -49,8 +49,8 @@ int main( int argc, char **argv ) {
     
     // print array if the user gave -o output option
     if( (rank_of_the_process == 0) && (arguments.output == true) ) {
-    //    print_arguments(arguments);
-        print_grid(grid,"output.csv");
+        print_arguments(arguments);
+        print_grid(grid, rank_of_the_process, "global_grid", 0);
     }
 
     MPI_Datatype block_1, block_2;
@@ -65,8 +65,8 @@ int main( int argc, char **argv ) {
 //    print_sendcounts_and_displs(sendcounts,displs,grid);
     MPI_Scatterv(&(grid->array[0][0]), sendcounts, displs, block_1, &local_grid->array[0][0], subgrid_dimension*subgrid_dimension, MPI_CHAR, 0, MPI_COMM_WORLD);
 
-    print_2d_array(local_grid->array,local_grid->dimension,rank_of_the_process,"local_grid",0);
-    
+    print_grid(local_grid, rank_of_the_process, "local_grid", 0);
+
     MPI_Comm comm;
     MPI_Cart_create(MPI_COMM_WORLD, 2, dim, periods, reorder, &comm);
 
@@ -128,8 +128,7 @@ int main( int argc, char **argv ) {
                 next_local_grid->array[i][j] = apply_rules(local_grid->array[i][j],neighbours);
             }
         }
-        print_2d_array(next_local_grid->array,local_grid->dimension,rank_of_the_process,"next_local_grid", generation);
-
+        print_grid(next_local_grid, rank_of_the_process, "next_local_grid", generation);
         // wait for all given communications to complete
         MPI_Waitall(16, request, status);
         
@@ -169,7 +168,7 @@ int main( int argc, char **argv ) {
                 // apply the rules and create next generation grid
                 next_local_grid->array[i][last] = apply_rules(local_grid->array[i][last],neighbours);
             }
-            print_2d_array(next_local_grid->array,local_grid->dimension,rank_of_the_process,"next_local_grid2", generation);
+            print_grid(next_local_grid, rank_of_the_process, "next_local_grid2", generation);
         }
     }
 
