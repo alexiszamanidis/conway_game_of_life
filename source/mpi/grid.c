@@ -48,7 +48,7 @@ char **allocate_2d_array(int dimension) {
     return array;
 }
 
-struct grid *allocate_grid(int dimension, int number_of_processes) {
+struct grid *allocate_grid(int dimension) {
     struct grid *grid = (struct grid *)malloc(sizeof(struct grid));
     if( grid == NULL ) {
         printf("allocate_grid: %s\n",strerror(errno));
@@ -57,8 +57,6 @@ struct grid *allocate_grid(int dimension, int number_of_processes) {
 
     grid->array = allocate_2d_array(dimension);
     grid->dimension = dimension;
-    calculate_subgrid_dimension(&grid,number_of_processes);
-    grid->process_grid_dimension = grid->dimension/grid->subgrid_dimension;
 
     return grid;
 }
@@ -88,28 +86,28 @@ void initialize_grid_from_inputfile(struct grid **grid, char *inputfile) {
     fclose(file_pointer);
 }
 
-void initialize_sendcounts_and_displs_for_scattering_the_grid(int *sendcounts, int *displs, struct grid *grid) {
-    for (int i = 0; i < grid->process_grid_dimension; i++)
-        for (int j = 0; j < grid->process_grid_dimension; j++) {
-            int index = i * grid->process_grid_dimension + j;
+void initialize_sendcounts_and_displs_for_scattering_the_grid(int *sendcounts, int *displs, int dimension,int subgrid_dimension, int process_grid_dimension) {
+    for (int i = 0; i < process_grid_dimension; i++)
+        for (int j = 0; j < process_grid_dimension; j++) {
+            int index = i * process_grid_dimension + j;
             sendcounts[index] = 1;
-            displs[index] = (i*grid->dimension*grid->subgrid_dimension) + (j*grid->subgrid_dimension);
+            displs[index] = (i*dimension*subgrid_dimension) + (j*subgrid_dimension);
         }
 }
 
-void calculate_subgrid_dimension(struct grid **grid,int number_of_processes) {
+int calculate_subgrid_dimension(int dimension, int number_of_processes) {
     int root = is_perfect_square(number_of_processes);
     
     if( root == -1 ) {
         printf("calculate_subgrid_dimension: number of processes should be perfect square\n");
         exit(FAILURE);
     }
-    else if( ((*grid)->dimension % root) != 0 ) {
+    else if( (dimension % root) != 0 ) {
         printf("calculate_subgrid_dimension: number of processes can not divide perfectly the dimension\n");
         exit(FAILURE);
     }
     else
-        (*grid)->subgrid_dimension = ((*grid)->dimension / root);
+        return (dimension / root);
 }
 
 char apply_rules(char state, int neighbours) {
@@ -155,16 +153,16 @@ void print_grid(struct grid *grid, char *filename) {
     fclose(file_pointer);
 }
 
-void print_sendcounts_and_displs(int *sendcounts, int *displs, struct grid *grid) {
-    for (int i = 0; i < grid->process_grid_dimension; i++)
-        for (int j = 0; j < grid->process_grid_dimension; j++) {
-            int index = i * grid->process_grid_dimension + j;
+void print_sendcounts_and_displs(int *sendcounts, int *displs, int process_grid_dimension) {
+    for (int i = 0; i < process_grid_dimension; i++)
+        for (int j = 0; j < process_grid_dimension; j++) {
+            int index = i * process_grid_dimension + j;
             printf("%d ",sendcounts[index]);
         }
     printf("\n");
-    for (int i = 0; i < grid->process_grid_dimension; i++)
-        for (int j = 0; j < grid->process_grid_dimension; j++) {
-            int index = i * grid->process_grid_dimension + j;
+    for (int i = 0; i < process_grid_dimension; i++)
+        for (int j = 0; j < process_grid_dimension; j++) {
+            int index = i * process_grid_dimension + j;
             printf("%d ",displs[index]);
         }
     printf("\n");

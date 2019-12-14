@@ -16,21 +16,19 @@ struct grid_side_dimensions {
 struct grid {
     char **array;
     int dimension;
-    int subgrid_dimension;
-    int process_grid_dimension;
 };
 
 struct grid_side_dimensions *allocate_grid_side_dimensions(int );
 char **allocate_2d_array(int );
-struct grid *allocate_grid(int , int);
+struct grid *allocate_grid(int);
 void initialize_grid(struct grid **);
 void initialize_grid_from_inputfile(struct grid **, char *);
-void initialize_sendcounts_and_displs_for_scattering_the_grid(int *, int *, struct grid * );
-void calculate_subgrid_dimension(struct grid **,int );
+void initialize_sendcounts_and_displs_for_scattering_the_grid(int *, int *, int, int , int);
+int calculate_subgrid_dimension(int ,int );
 char apply_rules(char , int );
 void print_2d_array(char **, int, int, char *, int);
 void print_grid(struct grid *, char *);
-void print_sendcounts_and_displs(int *, int *, struct grid *);
+void print_sendcounts_and_displs(int *, int *, int);
 void print_grid_side_dimensions(struct grid_side_dimensions *, int , int);
 void print_1d_array(char *, int );
 void free_2d_array(char ***);
