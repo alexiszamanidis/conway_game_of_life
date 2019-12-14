@@ -117,14 +117,10 @@ int main( int argc, char **argv ) {
         // calculate intermidiate elements
         for( int i = 1 ; i < grid->subgrid_dimension-1 ; i++ ) {
             for( int j = 1 ; j < grid->subgrid_dimension-1 ; j++ ) {
-                int neighbours = 0;
-                // calculate neighbours
-                for( int k = -1 ; k < 2 ; k++ ) {
-                        for( int l = -1 ; l < 2 ; l++ ) {
-                        if( (local_grid[i+k][j+l] == '1') && ((k!=0)||(l!=0)))
-                            neighbours++;
-                    }
-                }
+                // sum all alive neighbours
+                int neighbours = (local_grid[i-1][j-1]-'0')+(local_grid[i-1][j]-'0')+(local_grid[i-1][j+1]-'0')
+                                +(local_grid[i][j-1]-'0')+(local_grid[i][j+1]-'0')
+                                +(local_grid[i+1][j-1]-'0')+(local_grid[i+1][j]-'0')+(local_grid[i+1][j+1]-'0');
                 // APPLY THE RULES
                 // if current state is a dead cell and has exactly 3 neighbours then the state becomes a live cell
                 if( (local_grid[i][j] == '0') && (neighbours == 3))
