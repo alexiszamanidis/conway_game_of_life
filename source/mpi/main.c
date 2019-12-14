@@ -84,8 +84,8 @@ int main( int argc, char **argv ) {
 
 //    print_neighbor_ranks(neighbor_processes,rank_of_the_process);
 
-    MPI_Status status;
-    MPI_Request request;
+    MPI_Status status[16];
+    MPI_Request request[16];
     MPI_Datatype columns;
     MPI_Type_vector(grid->subgrid_dimension, 1, grid->subgrid_dimension, MPI_CHAR, &columns);
     MPI_Type_commit(&columns);
@@ -95,24 +95,28 @@ int main( int argc, char **argv ) {
             printf("generation: %d\n", i+1);
         }
         // send all neighbors
-        MPI_Isend(&local_grid[0][0], grid->subgrid_dimension, MPI_CHAR, neighbor_processes.top_neighbor_rank, 0, MPI_COMM_WORLD, &request);
-        MPI_Isend(&local_grid[grid->subgrid_dimension-1][0], grid->subgrid_dimension, MPI_CHAR, neighbor_processes.bottom_neighbor_rank, 0, MPI_COMM_WORLD, &request);
-        MPI_Isend(&local_grid[0][0], 1, columns, neighbor_processes.left_neighbor_rank, 0,MPI_COMM_WORLD, &request);
-        MPI_Isend(&local_grid[0][grid->subgrid_dimension-1], 1, columns, neighbor_processes.right_neighbor_rank, 0, MPI_COMM_WORLD, &request);
-        MPI_Isend(&local_grid[0][0], 1, MPI_CHAR, neighbor_processes.top_left_neighbor_rank, 0,MPI_COMM_WORLD, &request);
-        MPI_Isend(&local_grid[0][grid->subgrid_dimension-1], 1, MPI_CHAR, neighbor_processes.top_right_neighbor_rank, 0, MPI_COMM_WORLD, &request);
-        MPI_Isend(&local_grid[grid->subgrid_dimension-1][0], 1, MPI_CHAR, neighbor_processes.bottom_left_neighbor_rank, 0,MPI_COMM_WORLD, &request);
-        MPI_Isend(&local_grid[grid->subgrid_dimension-1][grid->subgrid_dimension-1],1, MPI_CHAR, neighbor_processes.bottom_right_neighbor_rank, 0, MPI_COMM_WORLD, &request);
+        MPI_Isend(&local_grid[0][0], grid->subgrid_dimension, MPI_CHAR, neighbor_processes.top_neighbor_rank, 0, MPI_COMM_WORLD, &request[0]);
+        MPI_Isend(&local_grid[grid->subgrid_dimension-1][0], grid->subgrid_dimension, MPI_CHAR, neighbor_processes.bottom_neighbor_rank, 0, MPI_COMM_WORLD, &request[1]);
+        MPI_Isend(&local_grid[0][0], 1, columns, neighbor_processes.left_neighbor_rank, 0,MPI_COMM_WORLD, &request[2]);
+        MPI_Isend(&local_grid[0][grid->subgrid_dimension-1], 1, columns, neighbor_processes.right_neighbor_rank, 0, MPI_COMM_WORLD, &request[3]);
+        MPI_Isend(&local_grid[0][0], 1, MPI_CHAR, neighbor_processes.top_left_neighbor_rank, 0,MPI_COMM_WORLD, &request[4]);
+        MPI_Isend(&local_grid[0][grid->subgrid_dimension-1], 1, MPI_CHAR, neighbor_processes.top_right_neighbor_rank, 0, MPI_COMM_WORLD, &request[5]);
+        MPI_Isend(&local_grid[grid->subgrid_dimension-1][0], 1, MPI_CHAR, neighbor_processes.bottom_left_neighbor_rank, 0,MPI_COMM_WORLD, &request[6]);
+        MPI_Isend(&local_grid[grid->subgrid_dimension-1][grid->subgrid_dimension-1],1, MPI_CHAR, neighbor_processes.bottom_right_neighbor_rank, 0, MPI_COMM_WORLD, &request[7]);
 
         // receive all neighbors
-        MPI_Recv(grid_side_dimensions->top_dimension, grid->subgrid_dimension, MPI_CHAR, neighbor_processes.top_neighbor_rank, 0,MPI_COMM_WORLD, &status);
-        MPI_Recv(grid_side_dimensions->bottom_dimension, grid->subgrid_dimension, MPI_CHAR, neighbor_processes.bottom_neighbor_rank, 0,MPI_COMM_WORLD, &status);
-        MPI_Recv(grid_side_dimensions->left_dimension, grid->subgrid_dimension, MPI_CHAR, neighbor_processes.left_neighbor_rank, 0,MPI_COMM_WORLD, &status);
-        MPI_Recv(grid_side_dimensions->right_dimension, grid->subgrid_dimension, MPI_CHAR, neighbor_processes.right_neighbor_rank, 0,MPI_COMM_WORLD, &status);
-        MPI_Recv(&grid_side_dimensions->top_left, 1, MPI_CHAR, neighbor_processes.top_left_neighbor_rank, 0, MPI_COMM_WORLD, &status);
-        MPI_Recv(&grid_side_dimensions->top_right, 1, MPI_CHAR, neighbor_processes.top_right_neighbor_rank, 0, MPI_COMM_WORLD, &status);
-        MPI_Recv(&grid_side_dimensions->bottom_left, 1, MPI_CHAR, neighbor_processes.bottom_left_neighbor_rank, 0, MPI_COMM_WORLD, &status);
-        MPI_Recv(&grid_side_dimensions->bootom_right, 1, MPI_CHAR, neighbor_processes.bottom_right_neighbor_rank, 0, MPI_COMM_WORLD, &status);
+        MPI_Irecv(grid_side_dimensions->top_dimension, grid->subgrid_dimension, MPI_CHAR, neighbor_processes.top_neighbor_rank, 0,MPI_COMM_WORLD, &request[8]);
+        MPI_Irecv(grid_side_dimensions->bottom_dimension, grid->subgrid_dimension, MPI_CHAR, neighbor_processes.bottom_neighbor_rank, 0,MPI_COMM_WORLD, &request[9]);
+        MPI_Irecv(grid_side_dimensions->left_dimension, grid->subgrid_dimension, MPI_CHAR, neighbor_processes.left_neighbor_rank, 0,MPI_COMM_WORLD, &request[10]);
+        MPI_Irecv(grid_side_dimensions->right_dimension, grid->subgrid_dimension, MPI_CHAR, neighbor_processes.right_neighbor_rank, 0,MPI_COMM_WORLD, &request[11]);
+        MPI_Irecv(&grid_side_dimensions->top_left, 1, MPI_CHAR, neighbor_processes.top_left_neighbor_rank, 0, MPI_COMM_WORLD, &request[12]);
+        MPI_Irecv(&grid_side_dimensions->top_right, 1, MPI_CHAR, neighbor_processes.top_right_neighbor_rank, 0, MPI_COMM_WORLD, &request[13]);
+        MPI_Irecv(&grid_side_dimensions->bottom_left, 1, MPI_CHAR, neighbor_processes.bottom_left_neighbor_rank, 0, MPI_COMM_WORLD, &request[14]);
+        MPI_Irecv(&grid_side_dimensions->bootom_right, 1, MPI_CHAR, neighbor_processes.bottom_right_neighbor_rank, 0, MPI_COMM_WORLD, &request[15]);
+        
+        // wait for all given communications to complete
+        MPI_Waitall(16, request, status);
+        
         print_grid_side_dimensions(grid_side_dimensions,grid->subgrid_dimension,rank_of_the_process);
     }
 
