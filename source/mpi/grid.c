@@ -112,6 +112,18 @@ void calculate_subgrid_dimension(struct grid **grid,int number_of_processes) {
         (*grid)->subgrid_dimension = ((*grid)->dimension / root);
 }
 
+char apply_rules(char state, int neighbours) {
+    // if current state is a dead cell and has exactly 3 neighbours then the state becomes a live cell
+    if( (state == '0') && (neighbours == 3))
+        return '1';
+    // if current state is a live cell and has fewer than 2 or more than 3 neighbours then the state becomes a dead cell
+    else if( (state == '1') && ((neighbours < 2) || (neighbours > 3)) )
+        return '0';
+    // otherwise, if the current state has 2 or 3 neighbors lives on to the next generation
+    else
+        return state;
+}
+
 void print_2d_array(char **array, int dimension, int rank, char *grid_name, int generation) {
     char filename[200];
     snprintf(filename, 200, "process_%s_%d_%d.csv",grid_name,rank,generation);

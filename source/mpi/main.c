@@ -8,7 +8,7 @@ int main( int argc, char **argv ) {
     int number_of_processes, rank_of_the_process, reorder = 1;
     double local_start, local_end, local_elapsed, max_elapsed;
     char **local_grid, **next_local_grid;
-    int periods[2]= {1,1}, dim[2], coords[2];
+    int periods[2]= {1,1}, dim[2], coords[2], neighbours, last;
     struct neighbor_processes neighbor_processes;
     struct grid_side_dimensions *grid_side_dimensions = NULL;
     srand(time(NULL));
@@ -43,7 +43,8 @@ int main( int argc, char **argv ) {
     next_local_grid = allocate_2d_array(grid->subgrid_dimension);
     dim[0] = grid->process_grid_dimension;
     dim[1] = grid->process_grid_dimension;
-
+    last = grid->subgrid_dimension-1;
+    
     // print array if the user gave -o output option
     if( (rank_of_the_process == 0) && (arguments.output == true) ) {
     //    print_arguments(arguments);
@@ -118,19 +119,11 @@ int main( int argc, char **argv ) {
         for( int i = 1 ; i < grid->subgrid_dimension-1 ; i++ ) {
             for( int j = 1 ; j < grid->subgrid_dimension-1 ; j++ ) {
                 // sum all alive neighbours
-                int neighbours = (local_grid[i-1][j-1]-'0')+(local_grid[i-1][j]-'0')+(local_grid[i-1][j+1]-'0')
-                                +(local_grid[i][j-1]-'0')+(local_grid[i][j+1]-'0')
-                                +(local_grid[i+1][j-1]-'0')+(local_grid[i+1][j]-'0')+(local_grid[i+1][j+1]-'0');
-                // APPLY THE RULES
-                // if current state is a dead cell and has exactly 3 neighbours then the state becomes a live cell
-                if( (local_grid[i][j] == '0') && (neighbours == 3))
-                    next_local_grid[i][j] = '1';
-                // if current state is a live cell and has fewer than 2 or more than 3 neighbours then the state becomes a dead cell
-                else if( (local_grid[i][j] == '1') && ((neighbours < 2) || (neighbours > 3)) )
-                    next_local_grid[i][j] = '0';
-                // otherwise, if the current state has 2 or 3 neighbors lives on to the next generation
-                else
-                    next_local_grid[i][j] = local_grid[i][j];
+                neighbours = (local_grid[i-1][j-1]-'0')+(local_grid[i-1][j]-'0')+(local_grid[i-1][j+1]-'0')
+                            +(local_grid[i][j-1]-'0')+(local_grid[i][j+1]-'0')
+                            +(local_grid[i+1][j-1]-'0')+(local_grid[i+1][j]-'0')+(local_grid[i+1][j+1]-'0');
+                // apply the rules and create next generation grid
+                next_local_grid[i][j] = apply_rules(local_grid[i][j],neighbours);
             }
         }
         print_2d_array(next_local_grid,grid->subgrid_dimension,rank_of_the_process,"next_local_grid", generation);
@@ -138,7 +131,44 @@ int main( int argc, char **argv ) {
         // wait for all given communications to complete
         MPI_Waitall(16, request, status);
         
-    //    print_grid_side_dimensions(grid_side_dimensions,grid->subgrid_dimension,rank_of_the_process);
+        if( rank_of_the_process == 0 ) {
+            print_grid_side_dimensions(grid_side_dimensions,grid->subgrid_dimension,rank_of_the_process);
+            // calculate outline elements
+            for( int i = 1 ; i < grid->subgrid_dimension-1 ; i++ ) {
+                // top dimension: sum all alive neighbours
+                neighbours = (local_grid[0][i-1]-'0')+(local_grid[0][i+1]-'0')
+                            +(local_grid[1][i-1]-'0')+(local_grid[1][i]-'0')+(local_grid[1][i+1]-'0')
+                            +(grid_side_dimensions->top_dimension[i-1]-'0')+(grid_side_dimensions->top_dimension[i]-'0')+(grid_side_dimensions->top_dimension[i+1]-'0');
+            //    printf("%c %d ",local_grid[0][i],neighbours);
+                // apply the rules and create next generation grid
+                next_local_grid[0][i] = apply_rules(local_grid[0][i],neighbours);
+
+                // bottom dimension: sum all alive neighbours
+                neighbours = (local_grid[last][i-1]-'0')+(local_grid[last][i+1]-'0')
+                            +(local_grid[last-1][i-1]-'0')+(local_grid[last-1][i]-'0')+(local_grid[last-1][i+1]-'0')
+                            +(grid_side_dimensions->bottom_dimension[i-1]-'0')+(grid_side_dimensions->bottom_dimension[i]-'0')+(grid_side_dimensions->bottom_dimension[i+1]-'0');
+            //    printf("%c %d ",local_grid[last][i],neighbours);
+                // apply the rules and create next generation grid
+                next_local_grid[last][i] = apply_rules(local_grid[last][i],neighbours);
+
+                // left dimension: sum all alive neighbours
+                neighbours = (local_grid[i-1][0]-'0')+(local_grid[i+1][0]-'0')
+                            +(local_grid[i-1][1]-'0')+(local_grid[i][1]-'0')+(local_grid[i+1][1]-'0')
+                            +(grid_side_dimensions->left_dimension[i-1]-'0')+(grid_side_dimensions->left_dimension[i]-'0')+(grid_side_dimensions->left_dimension[i+1]-'0');
+            //    printf("%c %d ",local_grid[i][0],neighbours);
+                // apply the rules and create next generation grid
+                next_local_grid[i][0] = apply_rules(local_grid[i][0],neighbours);
+
+                // right dimension: sum all alive neighbours
+                neighbours = (local_grid[i-1][last]-'0')+(local_grid[i+1][last]-'0')
+                            +(local_grid[i-1][last-1]-'0')+(local_grid[i][last-1]-'0')+(local_grid[i+1][last-1]-'0')
+                            +(grid_side_dimensions->right_dimension[i-1]-'0')+(grid_side_dimensions->right_dimension[i]-'0')+(grid_side_dimensions->right_dimension[i+1]-'0');
+            //    printf("%c %d \n",local_grid[i][last],neighbours);
+                // apply the rules and create next generation grid
+                next_local_grid[i][last] = apply_rules(local_grid[i][last],neighbours);
+            }
+        //    print_2d_array(next_local_grid,grid->subgrid_dimension,rank_of_the_process,"next_local_grid2", generation);
+        }
     }
 
     // stop Wtime and Profiling
