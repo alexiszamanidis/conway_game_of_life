@@ -44,3 +44,19 @@ After basic stucture allocation, we scatter the grid and we initialize all local
 Another view of scattering with contiguous allocation:
 
 ![contiguous_scattering](https://user-images.githubusercontent.com/48658768/70816363-04451880-1dd8-11ea-9ba5-672ca092dab9.png)
+
+Basic structure of central iteration:
+
+```
+    MPI_Barrier
+    Start MPI_Wtime
+    For #iterations
+        Irecv(RRequest)
+        Isend(SRequest)
+        Calculation of intermidiate elements
+        WaitAll
+        Calculation of outline elements
+        Reduce global grid
+    End_for
+    EndMPI_Wtime
+```
