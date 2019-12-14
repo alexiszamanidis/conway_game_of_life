@@ -64,7 +64,7 @@ struct grid *allocate_grid(int dimension, int number_of_processes) {
 }
 
 void initialize_grid(struct grid **grid) {
-    char array_content[] = { '*', '.' };
+    char array_content[] = { '1', '0' };
     for( int i = 0 ; i < (*grid)->dimension ; i++ )
         for( int j = 0 ; j < (*grid)->dimension ; j++ )
             (*grid)->array[i][j] = array_content[ rand() % 2 ];

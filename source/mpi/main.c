@@ -121,17 +121,17 @@ int main( int argc, char **argv ) {
                 // calculate neighbours
                 for( int k = -1 ; k < 2 ; k++ ) {
                         for( int l = -1 ; l < 2 ; l++ ) {
-                        if( (local_grid[i+k][j+l] == '*') && ((k!=0)||(l!=0)))
+                        if( (local_grid[i+k][j+l] == '1') && ((k!=0)||(l!=0)))
                             neighbours++;
                     }
                 }
                 // APPLY THE RULES
                 // if current state is a dead cell and has exactly 3 neighbours then the state becomes a live cell
-                if( (local_grid[i][j] == '.') && (neighbours == 3))
-                    next_local_grid[i][j] = '*';
+                if( (local_grid[i][j] == '0') && (neighbours == 3))
+                    next_local_grid[i][j] = '1';
                 // if current state is a live cell and has fewer than 2 or more than 3 neighbours then the state becomes a dead cell
-                else if( (local_grid[i][j] == '*') && ((neighbours < 2) || (neighbours > 3)) )
-                    next_local_grid[i][j] = '.';
+                else if( (local_grid[i][j] == '1') && ((neighbours < 2) || (neighbours > 3)) )
+                    next_local_grid[i][j] = '0';
                 // otherwise, if the current state has 2 or 3 neighbors lives on to the next generation
                 else
                     next_local_grid[i][j] = local_grid[i][j];
