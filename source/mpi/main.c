@@ -114,10 +114,26 @@ int main( int argc, char **argv ) {
         MPI_Irecv(&grid_side_dimensions->bottom_left, 1, MPI_CHAR, neighbor_processes.bottom_left_neighbor_rank, 0, MPI_COMM_WORLD, &request[14]);
         MPI_Irecv(&grid_side_dimensions->bootom_right, 1, MPI_CHAR, neighbor_processes.bottom_right_neighbor_rank, 0, MPI_COMM_WORLD, &request[15]);
         
+        if( rank_of_the_process == 0) {
+            // calculate intermidiate elements
+            for( int i = 1 ; i < grid->subgrid_dimension-1 ; i++ ) {
+                for( int j = 1 ; j < grid->subgrid_dimension-1 ; j++ ) {
+                    int neighbors = 0;
+                    // calculate neighbors
+                    for( int k = -1 ; k < 2 ; k++ ) {
+                        for( int l = -1 ; l < 2 ; l++ ) {
+                            if( (local_grid[i+k][j+l] == '*') && ((k!=0)||(l!=0)))
+                                neighbors++;
+                        }
+                    }
+                }
+            }
+        }
+
         // wait for all given communications to complete
         MPI_Waitall(16, request, status);
         
-        print_grid_side_dimensions(grid_side_dimensions,grid->subgrid_dimension,rank_of_the_process);
+    //    print_grid_side_dimensions(grid_side_dimensions,grid->subgrid_dimension,rank_of_the_process);
     }
 
     // stop Wtime and Profiling
