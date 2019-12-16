@@ -47,7 +47,7 @@ int main( int argc, char **argv ) {
     dim[1] = process_grid_dimension;
     last = subgrid_dimension-1;
     
-    // print array if the user gave -o output option
+    // print arguments and array if the user gave -o output option for printing/debugging
     if( (rank_of_the_process == 0) && (arguments.output == true) ) {
         print_arguments(arguments);
         print_grid(grid, rank_of_the_process, "global_grid", 0);
@@ -64,8 +64,6 @@ int main( int argc, char **argv ) {
     initialize_sendcounts_and_displs_for_scattering_the_grid(sendcounts,displs,grid->dimension,subgrid_dimension,process_grid_dimension);
 //    print_sendcounts_and_displs(sendcounts,displs,grid);
     MPI_Scatterv(&(grid->array[0][0]), sendcounts, displs, block_1, &local_grid->array[0][0], subgrid_dimension*subgrid_dimension, MPI_CHAR, 0, MPI_COMM_WORLD);
-
-    print_grid(local_grid, rank_of_the_process, "local_grid", 0);
 
     MPI_Comm comm;
     MPI_Cart_create(MPI_COMM_WORLD, 2, dim, periods, reorder, &comm);
@@ -94,9 +92,8 @@ int main( int argc, char **argv ) {
     MPI_Type_commit(&columns);
 
     for( int generation = 0 ; generation < arguments.loops ; generation++ ) {
-        if( (rank_of_the_process == 0) && (arguments.output == true) ) {
+        if( (rank_of_the_process == 0) && (arguments.output == true) )
             printf("generation: %d\n", generation+1);
-        }
         // send all neighbours
         MPI_Isend(&local_grid->array[0][0], local_grid->dimension, MPI_CHAR, neighbor_processes.top_neighbor_rank, 0, MPI_COMM_WORLD, &request[0]);
         MPI_Isend(&local_grid->array[local_grid->dimension-1][0], local_grid->dimension, MPI_CHAR, neighbor_processes.bottom_neighbor_rank, 0, MPI_COMM_WORLD, &request[1]);
@@ -128,7 +125,7 @@ int main( int argc, char **argv ) {
                 next_local_grid->array[i][j] = apply_rules(local_grid->array[i][j],neighbours);
             }
         }
-        print_grid(next_local_grid, rank_of_the_process, "next_local_grid", generation);
+
         // wait for all given communications to complete
         MPI_Waitall(16, request, status);
         
@@ -195,7 +192,15 @@ int main( int argc, char **argv ) {
         // apply the rules and create next generation grid
         next_local_grid->array[last][last] = apply_rules(local_grid->array[last][last],neighbours);
 
-        print_grid(next_local_grid, rank_of_the_process, "next_local_grid2", generation);
+        // gather global array, print local and next local grid if the user gave -o output option for printing/debugging
+        if (arguments.output == true) {
+            MPI_Gatherv(&(next_local_grid->array[0][0]), next_local_grid->dimension * next_local_grid->dimension, MPI_CHAR, &(grid->array[0][0]), sendcounts, displs, block_1, 0,MPI_COMM_WORLD);
+            print_grid(local_grid, rank_of_the_process, "local_grid", generation+1);
+            print_grid(next_local_grid, rank_of_the_process, "next_local_grid", generation+1);
+        }
+        // print array if the user gave -o output option for printing/debugging
+        if (rank_of_the_process == 0 && arguments.output == true)
+            print_grid(grid, rank_of_the_process, "global_grid", generation+1);
     }
 
     // stop Wtime and Profiling
