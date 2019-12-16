@@ -7,7 +7,7 @@
 int main( int argc, char **argv ) {
     int number_of_processes, rank_of_the_process, reorder = 1;
     double local_start, local_end, local_elapsed, max_elapsed;
-    int periods[2]= {1,1}, dim[2], coords[2], neighbours, last, subgrid_dimension, process_grid_dimension;
+    int periods[2]= {1,1}, dim[2], coords[2], neighbours, last, subgrid_dimension, process_grid_dimension, *sendcounts, *displs;
     struct grid *grid = NULL,*local_grid = NULL, *next_local_grid = NULL;
     struct neighbor_processes neighbor_processes;
     struct grid_side_dimensions *grid_side_dimensions = NULL;
@@ -58,7 +58,9 @@ int main( int argc, char **argv ) {
     MPI_Type_create_resized(block_2, 0, sizeof(char), &block_1);
     MPI_Type_commit(&block_1);
 
-    int sendcounts[(int)pow(process_grid_dimension,2)],displs[(int)pow(process_grid_dimension,2)];
+    // allocate sendcounts and displacements
+    sendcounts = (int *)malloc(sizeof(int)*((int)pow(process_grid_dimension,2)));
+    displs = (int *)malloc(sizeof(int)*((int)pow(process_grid_dimension,2)));
 
     // initialize sendcounts, displacements and scatter the grid
     initialize_sendcounts_and_displs_for_scattering_the_grid(sendcounts,displs,grid->dimension,subgrid_dimension,process_grid_dimension);
@@ -214,6 +216,9 @@ int main( int argc, char **argv ) {
     if( rank_of_the_process == 0 )
         printf("Elapsed time = %f\n",max_elapsed);
     
+
+    free(sendcounts);
+    free(displs);
     free_grid_side_dimensions(&grid_side_dimensions);
     free_grid(&local_grid);
     free_grid(&next_local_grid);
