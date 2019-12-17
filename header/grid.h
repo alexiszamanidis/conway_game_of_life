@@ -26,6 +26,7 @@ void initialize_grid_from_inputfile(struct grid **, char *);
 void initialize_sendcounts_and_displs_for_scattering_the_grid(int *, int *, int, int , int);
 int calculate_subgrid_dimension(int ,int );
 char apply_rules(char , int );
+void swap_grids(struct grid **,struct grid **);
 void print_grid(struct grid *, int , char *, int );
 void print_sendcounts_and_displs(int *, int *, int);
 void print_grid_side_dimensions(struct grid_side_dimensions *, int , int);

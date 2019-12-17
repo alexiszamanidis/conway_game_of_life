@@ -122,6 +122,13 @@ char apply_rules(char state, int neighbours) {
         return state;
 }
 
+void swap_grids(struct grid **current_generation,struct grid **next_generation) {
+    struct grid *temp_grid;
+    temp_grid = *current_generation;
+    *current_generation = *next_generation;
+    *next_generation = temp_grid;
+}
+
 void print_grid(struct grid *grid, int rank, char *grid_name, int generation) {
     char filename[200];
     snprintf(filename, 200, "%s_r%d_g%d.csv",grid_name,rank,generation);
