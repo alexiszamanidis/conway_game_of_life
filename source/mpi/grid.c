@@ -78,9 +78,9 @@ void initialize_grid_from_inputfile(struct grid **grid, char *inputfile) {
     size_t length=0;
     for( int i = 0 ; i < (*grid)->dimension ; i++ ) {
         getline(&line, &length, file_pointer);
-        line[strlen(line)-1] = '\0';
         for( int j = 0 ; j < (*grid)->dimension ; j++ )
-            (*grid)->array[i][j] = line[j];
+            if( line[j] != '\0')
+                (*grid)->array[i][j] = line[j];
     }
     free(line);
     fclose(file_pointer);
