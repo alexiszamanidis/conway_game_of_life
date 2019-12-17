@@ -10,6 +10,8 @@
 
     * [Scattering](https://github.com/ZamanidisAlexios/conway_game_of_life#scattering)
 
+    * [Central iteration](https://github.com/ZamanidisAlexios/conway_game_of_life#central-iteration)
+
 # Conway's game of life
 
 The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970. The game is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input. One interacts with the Game of Life by creating an initial configuration and observing how it evolves.
@@ -33,19 +35,17 @@ After, process with rank equal to 0 allocates and initializes the global grid. T
 
 ![grid_allocation](https://user-images.githubusercontent.com/48658768/70812965-5898ca00-1dd1-11ea-893a-3ad410c0b58d.png)
 
-Then, each process allocates a structure grid side dimensions, local_grid and next_local_grid. Structure grid side dimensions is used for saving the outline elements of the grid. Local grid and next local grid are used for saving current generation and next generation cells.
+Then, each process allocates a structure grid side dimensions, current generation and next generation. Structure grid side dimensions is used for saving the outline elements of the grid. Current generation and next generation are used for calculating and saving current local and next local grid cells.
 
 ## Scattering
 
-After basic stucture allocation, we scatter the grid and we initialize all local grids. Example, if we have 4 processes, we will have:
+After basic stucture allocation, we scatter the grid and we initialize all current generation grids. Example, if we have 4 processes, we will have:
 
 ![scattering](https://user-images.githubusercontent.com/48658768/70816300-de1f7880-1dd7-11ea-9dbb-22685ad61715.png)
 
-Another view of scattering with contiguous allocation:
+### Central iteration
 
-![contiguous_scattering](https://user-images.githubusercontent.com/48658768/70816363-04451880-1dd8-11ea-9ba5-672ca092dab9.png)
-
-Basic structure of central iteration:
+Our basic structure of central iteration is:
 
 ```
     MPI_Barrier
@@ -53,9 +53,9 @@ Basic structure of central iteration:
     For #iterations
         Irecv(RRequest)
         Isend(SRequest)
-        Calculation of intermidiate elements
+        Calculation_of_intermidiate_elements
         WaitAll
-        Calculation of outline elements
+        Calculation_of_outline_elements
         Reduce global grid
     End_for
     EndMPI_Wtime
