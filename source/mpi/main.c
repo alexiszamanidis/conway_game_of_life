@@ -23,11 +23,6 @@ int main( int argc, char **argv ) {
     // get the rank of the process
     MPI_Comm_rank(MPI_COMM_WORLD, &rank_of_the_process);
 
-    // start Wtime and Profiling
-    MPI_Barrier(MPI_COMM_WORLD);
-    local_start = MPI_Wtime();
-    MPI_Pcontrol(1);
-
     MPI_Datatype blocktype_1, blocktype_2;
     MPI_Status status[16];
     MPI_Request request[16];
@@ -75,6 +70,11 @@ int main( int argc, char **argv ) {
         print_arguments(arguments);
         print_grid(grid, rank_of_the_process, "global_grid", 0);
     }
+
+    // start Wtime and Profiling
+    MPI_Barrier(MPI_COMM_WORLD);
+    local_start = MPI_Wtime();
+    MPI_Pcontrol(1);
 
     // basic structure of central iteration:
     for( generation = 0 ; generation < arguments.loops ; generation++ ) {
