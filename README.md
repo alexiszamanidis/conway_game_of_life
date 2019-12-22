@@ -51,8 +51,8 @@ Our basic structure of central iteration is:
     MPI_Barrier
     Start MPI_Wtime
     For #iterations
-        Isend(SRequest)
         Irecv(RRequest)
+        Isend(SRequest)
         Calculation_of_intermidiate_elements
         WaitAll
         Calculation_of_outline_elements

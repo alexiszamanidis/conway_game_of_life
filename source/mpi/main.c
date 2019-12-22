@@ -2,7 +2,7 @@
 #include "../../header/grid.h"
 #include "../../header/utilities.h"
 
-// mpiexec -n 4 ./game_of_life -d 20 -i ../inputfiles/grid_20x20.csv -o
+// mpiexec -n 4 ./game_of_life -d 10 -l 2 -i ../../inputfiles/grid_10x10.csv -o
 
 int main( int argc, char **argv ) {
     double local_start, local_end, local_elapsed, max_elapsed;
@@ -78,16 +78,7 @@ int main( int argc, char **argv ) {
 
     // basic structure of central iteration:
     for( generation = 0 ; generation < arguments.loops ; generation++ ) {
-        // send all neighbours
-        MPI_Isend(&current_generation->array[0][0], current_generation->dimension, MPI_CHAR, neighbour_processes.top_neighbour_rank, 0, MPI_COMM_WORLD, &request[0]);
-        MPI_Isend(&current_generation->array[current_generation->dimension-1][0], current_generation->dimension, MPI_CHAR, neighbour_processes.bottom_neighbour_rank, 0, MPI_COMM_WORLD, &request[1]);
-        MPI_Isend(&current_generation->array[0][0], 1, columns, neighbour_processes.left_neighbour_rank, 0,MPI_COMM_WORLD, &request[2]);
-        MPI_Isend(&current_generation->array[0][current_generation->dimension-1], 1, columns, neighbour_processes.right_neighbour_rank, 0, MPI_COMM_WORLD, &request[3]);
-        MPI_Isend(&current_generation->array[0][0], 1, MPI_CHAR, neighbour_processes.top_left_neighbour_rank, 0,MPI_COMM_WORLD, &request[4]);
-        MPI_Isend(&current_generation->array[0][current_generation->dimension-1], 1, MPI_CHAR, neighbour_processes.top_right_neighbour_rank, 0, MPI_COMM_WORLD, &request[5]);
-        MPI_Isend(&current_generation->array[current_generation->dimension-1][0], 1, MPI_CHAR, neighbour_processes.bottom_left_neighbour_rank, 0,MPI_COMM_WORLD, &request[6]);
-        MPI_Isend(&current_generation->array[current_generation->dimension-1][current_generation->dimension-1],1, MPI_CHAR, neighbour_processes.bottom_right_neighbour_rank, 0, MPI_COMM_WORLD, &request[7]);
-
+        
         // receive all neighbours
         MPI_Irecv(grid_side_dimensions->bottom_dimension, current_generation->dimension, MPI_CHAR, neighbour_processes.top_neighbour_rank, 0,MPI_COMM_WORLD, &request[8]);
         MPI_Irecv(grid_side_dimensions->top_dimension, current_generation->dimension, MPI_CHAR, neighbour_processes.bottom_neighbour_rank, 0,MPI_COMM_WORLD, &request[9]);
@@ -97,6 +88,16 @@ int main( int argc, char **argv ) {
         MPI_Irecv(&grid_side_dimensions->bottom_left_corner, 1, MPI_CHAR, neighbour_processes.top_right_neighbour_rank, 0, MPI_COMM_WORLD, &request[13]);
         MPI_Irecv(&grid_side_dimensions->top_right_corner, 1, MPI_CHAR, neighbour_processes.bottom_left_neighbour_rank, 0, MPI_COMM_WORLD, &request[14]);
         MPI_Irecv(&grid_side_dimensions->top_left_corner, 1, MPI_CHAR, neighbour_processes.bottom_right_neighbour_rank, 0, MPI_COMM_WORLD, &request[15]);
+
+        // send all neighbours
+        MPI_Isend(&current_generation->array[0][0], current_generation->dimension, MPI_CHAR, neighbour_processes.top_neighbour_rank, 0, MPI_COMM_WORLD, &request[0]);
+        MPI_Isend(&current_generation->array[current_generation->dimension-1][0], current_generation->dimension, MPI_CHAR, neighbour_processes.bottom_neighbour_rank, 0, MPI_COMM_WORLD, &request[1]);
+        MPI_Isend(&current_generation->array[0][0], 1, columns, neighbour_processes.left_neighbour_rank, 0,MPI_COMM_WORLD, &request[2]);
+        MPI_Isend(&current_generation->array[0][current_generation->dimension-1], 1, columns, neighbour_processes.right_neighbour_rank, 0, MPI_COMM_WORLD, &request[3]);
+        MPI_Isend(&current_generation->array[0][0], 1, MPI_CHAR, neighbour_processes.top_left_neighbour_rank, 0,MPI_COMM_WORLD, &request[4]);
+        MPI_Isend(&current_generation->array[0][current_generation->dimension-1], 1, MPI_CHAR, neighbour_processes.top_right_neighbour_rank, 0, MPI_COMM_WORLD, &request[5]);
+        MPI_Isend(&current_generation->array[current_generation->dimension-1][0], 1, MPI_CHAR, neighbour_processes.bottom_left_neighbour_rank, 0,MPI_COMM_WORLD, &request[6]);
+        MPI_Isend(&current_generation->array[current_generation->dimension-1][current_generation->dimension-1],1, MPI_CHAR, neighbour_processes.bottom_right_neighbour_rank, 0, MPI_COMM_WORLD, &request[7]);
         
         // calculate intermidiate elements
         for( i = 1 ; i < current_generation->dimension-1 ; i++ ) {
