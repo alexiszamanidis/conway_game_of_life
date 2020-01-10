@@ -1,4 +1,4 @@
-#include "../../header/grid.h"
+#include "../header/grid.h"
 
 struct grid_side_dimensions *allocate_grid_side_dimensions(int dimension) {
     struct grid_side_dimensions *grid_side_dimensions = (struct grid_side_dimensions *)malloc(sizeof(struct grid_side_dimensions));
