@@ -8,7 +8,7 @@ void parse_arguments(struct arguments *arguments,int argc, char **argv) {
                 arguments->dimension = atoi(optarg);
                 break;
             case 'l':
-                arguments->loops = atoi(optarg);
+                arguments->generations = atoi(optarg);
                 break;
             case 'i':
                 strcpy(arguments->inputfile,optarg);
@@ -25,7 +25,7 @@ void parse_arguments(struct arguments *arguments,int argc, char **argv) {
 
 void print_arguments(struct arguments arguments) {
     printf("dimension = %d\n",arguments.dimension);
-    printf("loops = %d\n",arguments.loops);
+    printf("generations = %d\n",arguments.generations);
     printf("inputfile = %s\n",arguments.inputfile);
     printf(arguments.output ? "output = true\n":"output = false\n");
 }

@@ -12,7 +12,7 @@ int main( int argc, char **argv ) {
     struct neighbour_processes neighbour_processes;
     struct grid_side_dimensions *grid_side_dimensions = NULL;
     srand(time(NULL));
-    struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .loops = DEFAULT_LOOPS, .inputfile = DEFAULT_INPUTFILE, .output = DEFAULT_OUTPUT };
+    struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .generations = DEFAULT_GENERATIONS, .inputfile = DEFAULT_INPUTFILE, .output = DEFAULT_OUTPUT };
     parse_arguments(&arguments,argc,argv);
 
     // initialize the MPI environment, and disable Profiling
@@ -77,7 +77,7 @@ int main( int argc, char **argv ) {
     MPI_Pcontrol(1);
 
     // basic structure of central iteration:
-    for( generation = 0 ; generation < arguments.loops ; generation++ ) {
+    for( generation = 0 ; generation < arguments.generations ; generation++ ) {
         
         // receive all neighbours
         MPI_Irecv(grid_side_dimensions->bottom_dimension, current_generation->dimension, MPI_CHAR, neighbour_processes.top_neighbour_rank, 0,MPI_COMM_WORLD, &request[8]);

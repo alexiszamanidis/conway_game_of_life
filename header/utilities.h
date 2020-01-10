@@ -5,7 +5,7 @@
 
 struct arguments {
     int dimension;
-    int loops;
+    int generations;
     char inputfile[BUFFER_SIZE];
     bool output;
 };
