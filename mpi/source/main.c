@@ -103,9 +103,9 @@ int main( int argc, char **argv ) {
         for( i = 1 ; i < current_generation->dimension-1 ; i++ ) {
             for( j = 1 ; j < current_generation->dimension-1 ; j++ ) {
                 // sum all alive neighbours
-                neighbours = (current_generation->array[i-1][j-1]-'0')+(current_generation->array[i-1][j]-'0')+(current_generation->array[i-1][j+1]-'0')
-                            +(current_generation->array[i][j-1]-'0')+(current_generation->array[i][j+1]-'0')
-                            +(current_generation->array[i+1][j-1]-'0')+(current_generation->array[i+1][j]-'0')+(current_generation->array[i+1][j+1]-'0');
+                neighbours = (current_generation->array[i-1][j-1])+(current_generation->array[i-1][j])+(current_generation->array[i-1][j+1])
+                            +(current_generation->array[i][j-1])+(current_generation->array[i][j+1])
+                            +(current_generation->array[i+1][j-1])+(current_generation->array[i+1][j])+(current_generation->array[i+1][j+1]);
                 // apply the rules and create next generation grid
                 next_generation->array[i][j] = apply_rules(current_generation->array[i][j],neighbours);
             }
@@ -118,62 +118,62 @@ int main( int argc, char **argv ) {
         // calculate outline elements
         for( i = 1 ; i < current_generation->dimension-1 ; i++ ) {
             // top dimension: sum all alive neighbours
-            neighbours = (current_generation->array[0][i-1]-'0')+(current_generation->array[0][i+1]-'0')
-                        +(current_generation->array[1][i-1]-'0')+(current_generation->array[1][i]-'0')+(current_generation->array[1][i+1]-'0')
-                        +(grid_side_dimensions->top_dimension[i-1]-'0')+(grid_side_dimensions->top_dimension[i]-'0')+(grid_side_dimensions->top_dimension[i+1]-'0');
+            neighbours = (current_generation->array[0][i-1])+(current_generation->array[0][i+1])
+                        +(current_generation->array[1][i-1])+(current_generation->array[1][i])+(current_generation->array[1][i+1])
+                        +(grid_side_dimensions->top_dimension[i-1])+(grid_side_dimensions->top_dimension[i])+(grid_side_dimensions->top_dimension[i+1]);
             // apply the rules and create next generation grid
             next_generation->array[0][i] = apply_rules(current_generation->array[0][i],neighbours);
 
             // bottom dimension: sum all alive neighbours
-            neighbours = (current_generation->array[last][i-1]-'0')+(current_generation->array[last][i+1]-'0')
-                        +(current_generation->array[last-1][i-1]-'0')+(current_generation->array[last-1][i]-'0')+(current_generation->array[last-1][i+1]-'0')
-                        +(grid_side_dimensions->bottom_dimension[i-1]-'0')+(grid_side_dimensions->bottom_dimension[i]-'0')+(grid_side_dimensions->bottom_dimension[i+1]-'0');
+            neighbours = (current_generation->array[last][i-1])+(current_generation->array[last][i+1])
+                        +(current_generation->array[last-1][i-1])+(current_generation->array[last-1][i])+(current_generation->array[last-1][i+1])
+                        +(grid_side_dimensions->bottom_dimension[i-1])+(grid_side_dimensions->bottom_dimension[i])+(grid_side_dimensions->bottom_dimension[i+1]);
             // apply the rules and create next generation grid
             next_generation->array[last][i] = apply_rules(current_generation->array[last][i],neighbours);
 
             // left dimension: sum all alive neighbours
-            neighbours = (current_generation->array[i-1][0]-'0')+(current_generation->array[i+1][0]-'0')
-                        +(current_generation->array[i-1][1]-'0')+(current_generation->array[i][1]-'0')+(current_generation->array[i+1][1]-'0')
-                        +(grid_side_dimensions->left_dimension[i-1]-'0')+(grid_side_dimensions->left_dimension[i]-'0')+(grid_side_dimensions->left_dimension[i+1]-'0');
+            neighbours = (current_generation->array[i-1][0])+(current_generation->array[i+1][0])
+                        +(current_generation->array[i-1][1])+(current_generation->array[i][1])+(current_generation->array[i+1][1])
+                        +(grid_side_dimensions->left_dimension[i-1])+(grid_side_dimensions->left_dimension[i])+(grid_side_dimensions->left_dimension[i+1]);
             // apply the rules and create next generation grid
             next_generation->array[i][0] = apply_rules(current_generation->array[i][0],neighbours);
 
             // right dimension: sum all alive neighbours
-            neighbours = (current_generation->array[i-1][last]-'0')+(current_generation->array[i+1][last]-'0')
-                        +(current_generation->array[i-1][last-1]-'0')+(current_generation->array[i][last-1]-'0')+(current_generation->array[i+1][last-1]-'0')
-                        +(grid_side_dimensions->right_dimension[i-1]-'0')+(grid_side_dimensions->right_dimension[i]-'0')+(grid_side_dimensions->right_dimension[i+1]-'0');
+            neighbours = (current_generation->array[i-1][last])+(current_generation->array[i+1][last])
+                        +(current_generation->array[i-1][last-1])+(current_generation->array[i][last-1])+(current_generation->array[i+1][last-1])
+                        +(grid_side_dimensions->right_dimension[i-1])+(grid_side_dimensions->right_dimension[i])+(grid_side_dimensions->right_dimension[i+1]);
             // apply the rules and create next generation grid
             next_generation->array[i][last] = apply_rules(current_generation->array[i][last],neighbours);
         }
         // top left corner cell: sum all alive neighbours
-        neighbours = (current_generation->array[0][1]-'0')+(current_generation->array[1][0]-'0')+(current_generation->array[1][1]-'0')
-                    +(grid_side_dimensions->top_dimension[0]-'0')+(grid_side_dimensions->top_dimension[1]-'0')
-                    +(grid_side_dimensions->left_dimension[0]-'0')+(grid_side_dimensions->left_dimension[1]-'0')
-                    +(grid_side_dimensions->top_left_corner-'0');
+        neighbours = (current_generation->array[0][1])+(current_generation->array[1][0])+(current_generation->array[1][1])
+                    +(grid_side_dimensions->top_dimension[0])+(grid_side_dimensions->top_dimension[1])
+                    +(grid_side_dimensions->left_dimension[0])+(grid_side_dimensions->left_dimension[1])
+                    +(grid_side_dimensions->top_left_corner);
         // apply the rules and create next generation grid
         next_generation->array[0][0] = apply_rules(current_generation->array[0][0],neighbours);
 
         // top right corner cell: sum all alive neighbours
-        neighbours = (current_generation->array[0][last-1]-'0')+(current_generation->array[1][last]-'0')+(current_generation->array[1][last-1]-'0')
-                    +(grid_side_dimensions->top_dimension[last]-'0')+(grid_side_dimensions->top_dimension[last-1]-'0')
-                    +(grid_side_dimensions->right_dimension[0]-'0')+(grid_side_dimensions->right_dimension[1]-'0')
-                    +(grid_side_dimensions->top_right_corner-'0');
+        neighbours = (current_generation->array[0][last-1])+(current_generation->array[1][last])+(current_generation->array[1][last-1])
+                    +(grid_side_dimensions->top_dimension[last])+(grid_side_dimensions->top_dimension[last-1])
+                    +(grid_side_dimensions->right_dimension[0])+(grid_side_dimensions->right_dimension[1])
+                    +(grid_side_dimensions->top_right_corner);
         // apply the rules and create next generation grid
         next_generation->array[0][last] = apply_rules(current_generation->array[0][last],neighbours);
 
         // bottom left corner cell: sum all alive neighbours
-        neighbours = (current_generation->array[last-1][0]-'0')+(current_generation->array[last-1][1]-'0')+(current_generation->array[last][1]-'0')
-                    +(grid_side_dimensions->bottom_dimension[0]-'0')+(grid_side_dimensions->bottom_dimension[1]-'0')
-                    +(grid_side_dimensions->left_dimension[last]-'0')+(grid_side_dimensions->left_dimension[last-1]-'0')
-                    +(grid_side_dimensions->bottom_left_corner-'0');
+        neighbours = (current_generation->array[last-1][0])+(current_generation->array[last-1][1])+(current_generation->array[last][1])
+                    +(grid_side_dimensions->bottom_dimension[0])+(grid_side_dimensions->bottom_dimension[1])
+                    +(grid_side_dimensions->left_dimension[last])+(grid_side_dimensions->left_dimension[last-1])
+                    +(grid_side_dimensions->bottom_left_corner);
         // apply the rules and create next generation grid
         
         next_generation->array[last][0] = apply_rules(current_generation->array[last][0],neighbours);
         // bottom right corner cell: sum all alive neighbours
-        neighbours = (current_generation->array[last-1][last]-'0')+(current_generation->array[last-1][last-1]-'0')+(current_generation->array[last][last-1]-'0')
-                    +(grid_side_dimensions->bottom_dimension[last]-'0')+(grid_side_dimensions->bottom_dimension[last-1]-'0')
-                    +(grid_side_dimensions->right_dimension[last]-'0')+(grid_side_dimensions->right_dimension[last-1]-'0')
-                    +(grid_side_dimensions->bottom_right_corner-'0');
+        neighbours = (current_generation->array[last-1][last])+(current_generation->array[last-1][last-1])+(current_generation->array[last][last-1])
+                    +(grid_side_dimensions->bottom_dimension[last])+(grid_side_dimensions->bottom_dimension[last-1])
+                    +(grid_side_dimensions->right_dimension[last])+(grid_side_dimensions->right_dimension[last-1])
+                    +(grid_side_dimensions->bottom_right_corner);
         // apply the rules and create next generation grid
         next_generation->array[last][last] = apply_rules(current_generation->array[last][last],neighbours);
 
