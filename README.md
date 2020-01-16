@@ -58,6 +58,7 @@ Our basic structure of central iteration is:
         Calculation_of_outline_elements
         (Gather_global_grid/Debugging)
         Swap_local_grids
+        Inform_processes_about_looping
     End_for
     EndMPI_Wtime
 ```

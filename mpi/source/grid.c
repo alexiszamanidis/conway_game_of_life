@@ -40,7 +40,7 @@ char **allocate_2d_array(int dimension) {
         printf("allocate_2d_array: %s\n",strerror(errno));
         exit(FAILURE);
     }
-    memset(allocate_all_array_elements, 'A',dimension * dimension * sizeof(char));
+
     // fix array rows
     for (int i = 0; i < dimension; i++)
         array[i] = &(allocate_all_array_elements[i * dimension]);
