@@ -37,5 +37,6 @@ void print_arguments(struct arguments );
 int is_perfect_square(int );
 void calculate_neighbours(struct neighbour_processes *, int, int);
 void print_neighbour_ranks(struct neighbour_processes , int );
+int *allocate_1d_array(int );
 
 #endif

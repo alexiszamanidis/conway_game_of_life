@@ -40,7 +40,7 @@ char **allocate_2d_array(int dimension) {
         printf("allocate_2d_array: %s\n",strerror(errno));
         exit(FAILURE);
     }
-    memset(allocate_all_array_elements, 'A',dimension * dimension * sizeof(char));
+
     // fix array rows
     for (int i = 0; i < dimension; i++)
         array[i] = &(allocate_all_array_elements[i * dimension]);
@@ -62,7 +62,7 @@ struct grid *allocate_grid(int dimension) {
 }
 
 void initialize_grid(struct grid **grid) {
-    char array_content[] = { '1', '0' };
+    int array_content[] = { 1, 0 };
     for( int i = 0 ; i < (*grid)->dimension ; i++ )
         for( int j = 0 ; j < (*grid)->dimension ; j++ )
             (*grid)->array[i][j] = array_content[ rand() % 2 ];
@@ -79,8 +79,16 @@ void initialize_grid_from_inputfile(struct grid **grid, char *inputfile) {
     for( int i = 0 ; i < (*grid)->dimension ; i++ ) {
         getline(&line, &length, file_pointer);
         for( int j = 0 ; j < (*grid)->dimension ; j++ )
-            if( line[j] != '\0')
-                (*grid)->array[i][j] = line[j];
+            if( line[j] != '\0') {
+                if( line[j] == '1' )
+                    (*grid)->array[i][j] = 1;
+                else if( (line[j]) == '0' )
+                    (*grid)->array[i][j] = 0;
+                else {
+                    printf("initialize_grid_from_inputfile: wrong character in inputfile '%s'\n",inputfile);
+                    exit(FAILURE);
+                }
+            }
     }
     free(line);
     fclose(file_pointer);
@@ -112,11 +120,11 @@ int calculate_subgrid_dimension(int dimension, int number_of_processes) {
 
 char apply_rules(char state, int neighbours) {
     // if current state is a dead cell and has exactly 3 neighbours then the state becomes a live cell
-    if( (state == '0') && (neighbours == 3))
-        return '1';
+    if( (state == 0) && (neighbours == 3))
+        return 1;
     // if current state is a live cell and has fewer than 2 or more than 3 neighbours then the state becomes a dead cell
-    else if( (state == '1') && ((neighbours < 2) || (neighbours > 3)) )
-        return '0';
+    else if( (state == 1) && ((neighbours < 2) || (neighbours > 3)) )
+        return 0;
     // otherwise, if the current state has 2 or 3 neighbors lives on to the next generation
     else
         return state;
@@ -140,7 +148,7 @@ void print_grid(struct grid *grid, int rank, char *grid_name, int generation) {
 //    fprintf(file_pointer, "Dimension = %d, Subgrid dimension = %d, Process grid dimension = %d \n",grid->dimension, grid->subgrid_dimension, grid->process_grid_dimension);
     for( int i = 0 ; i < grid->dimension ; i++ ) {
         for( int j = 0 ; j < grid->dimension ; j++ )
-            fprintf(file_pointer, "%c",grid->array[i][j]);
+            fprintf(file_pointer, "%d",grid->array[i][j]);
         fprintf(file_pointer, "\n");
     }
     fclose(file_pointer);

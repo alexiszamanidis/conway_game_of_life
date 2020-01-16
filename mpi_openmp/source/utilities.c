@@ -2,12 +2,12 @@
 
 void parse_arguments(struct arguments *arguments,int argc, char **argv) {
     int option;
-    while((option = getopt(argc, argv,"d:l:i:t:o")) != -1){
+    while((option = getopt(argc, argv,"d:g:i:t:o")) != -1){
         switch(option){
             case 'd':
                 arguments->dimension = atoi(optarg);
                 break;
-            case 'l':
+            case 'g':
                 arguments->generations = atoi(optarg);
                 break;
             case 'i':
@@ -85,4 +85,13 @@ void print_neighbour_ranks(struct neighbour_processes neighbour_processes, int r
             ,neighbour_processes.bottom_left_neighbour_rank,neighbour_processes.top_neighbour_rank
             ,neighbour_processes.top_right_neighbour_rank,neighbour_processes.top_left_neighbour_rank,
             neighbour_processes.right_neighbour_rank,neighbour_processes.left_neighbour_rank);
+}
+
+int *allocate_1d_array(int number_of_columns) {
+    int *array = (int *)malloc(sizeof(int));
+    if( array == NULL ){
+        printf("allocate_1d_array: %s\n",strerror(errno));
+        exit(FAILURE);
+    }
+    return array;
 }
