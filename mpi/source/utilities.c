@@ -2,12 +2,12 @@
 
 void parse_arguments(struct arguments *arguments,int argc, char **argv) {
     int option;
-    while((option = getopt(argc, argv,"d:l:i:t:o")) != -1){
+    while((option = getopt(argc, argv,"d:g:i:t:o")) != -1){
         switch(option){
             case 'd':
                 arguments->dimension = atoi(optarg);
                 break;
-            case 'l':
+            case 'g':
                 arguments->generations = atoi(optarg);
                 break;
             case 'i':
