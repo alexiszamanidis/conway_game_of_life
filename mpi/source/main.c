@@ -6,7 +6,7 @@
 
 int main( int argc, char **argv ) {
     double local_start, local_end, local_elapsed, max_elapsed;
-    int number_of_processes, rank_of_the_process, generation, i, j;
+    int number_of_processes, rank_of_the_process, generation, i, j, generation_continue = 1, different_generations;
     int neighbours, last, subgrid_dimension, process_grid_dimension, *sendcounts, *displs;
     struct grid *grid = NULL,*current_generation = NULL, *next_generation = NULL;
     struct neighbour_processes neighbour_processes;
@@ -77,7 +77,7 @@ int main( int argc, char **argv ) {
     MPI_Pcontrol(1);
 
     // basic structure of central iteration:
-    for( generation = 0 ; generation < arguments.generations ; generation++ ) {
+    for( generation = 0 ; (generation < arguments.generations) && (generation_continue == 1) ; generation++ ) {
         
         // receive all neighbours
         MPI_Irecv(grid_side_dimensions->bottom_dimension, current_generation->dimension, MPI_CHAR, neighbour_processes.top_neighbour_rank, 0,MPI_COMM_WORLD, &request[8]);
@@ -99,6 +99,8 @@ int main( int argc, char **argv ) {
         MPI_Isend(&current_generation->array[current_generation->dimension-1][0], 1, MPI_CHAR, neighbour_processes.bottom_left_neighbour_rank, 0,MPI_COMM_WORLD, &request[6]);
         MPI_Isend(&current_generation->array[current_generation->dimension-1][current_generation->dimension-1],1, MPI_CHAR, neighbour_processes.bottom_right_neighbour_rank, 0, MPI_COMM_WORLD, &request[7]);
         
+        different_generations = 0;
+
         // calculate intermidiate elements
         for( i = 1 ; i < current_generation->dimension-1 ; i++ ) {
             for( j = 1 ; j < current_generation->dimension-1 ; j++ ) {
@@ -108,6 +110,10 @@ int main( int argc, char **argv ) {
                             +(current_generation->array[i+1][j-1])+(current_generation->array[i+1][j])+(current_generation->array[i+1][j+1]);
                 // apply the rules and create next generation grid
                 next_generation->array[i][j] = apply_rules(current_generation->array[i][j],neighbours);
+
+                // check if there is a difference between the generations
+                if( (different_generations == 0) && (next_generation->array[i][j] != current_generation->array[i][j]) )
+                    different_generations = 1;
             }
         }
 
@@ -144,6 +150,14 @@ int main( int argc, char **argv ) {
                         +(grid_side_dimensions->right_dimension[i-1])+(grid_side_dimensions->right_dimension[i])+(grid_side_dimensions->right_dimension[i+1]);
             // apply the rules and create next generation grid
             next_generation->array[i][last] = apply_rules(current_generation->array[i][last],neighbours);
+
+            // check if there is a difference between the generations
+            if( different_generations == 0 ) {
+                if( (next_generation->array[0][i] != current_generation->array[0][i]) || (next_generation->array[last][i] != current_generation->array[last][i]) ||
+                    (next_generation->array[i][0] != current_generation->array[i][0]) || (next_generation->array[i][last] != current_generation->array[i][last]) ) {
+                    different_generations = 1;
+                }
+            }
         }
         // top left corner cell: sum all alive neighbours
         neighbours = (current_generation->array[0][1])+(current_generation->array[1][0])+(current_generation->array[1][1])
@@ -176,6 +190,14 @@ int main( int argc, char **argv ) {
                     +(grid_side_dimensions->bottom_right_corner);
         // apply the rules and create next generation grid
         next_generation->array[last][last] = apply_rules(current_generation->array[last][last],neighbours);
+
+        // check if there is a difference between the generations
+        if( different_generations == 0 ) {
+            if( (next_generation->array[0][0] != current_generation->array[0][0]) || (next_generation->array[0][last] != current_generation->array[0][last]) ||
+                (next_generation->array[last][0] != current_generation->array[last][0]) || (next_generation->array[last][last] != current_generation->array[last][last]) ) {
+                different_generations = 1;
+            }
+        }
 
         // gather global global grid, print current generation and next generation grid for each process if the user gave -o output option for printing/debugging
         if (arguments.output == true) {
