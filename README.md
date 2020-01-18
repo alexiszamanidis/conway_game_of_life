@@ -10,6 +10,8 @@
 
     * [Scattering](https://github.com/ZamanidisAlexios/conway_game_of_life#scattering)
 
+    * [Neighbour calculation](https://github.com/ZamanidisAlexios/conway_game_of_life#neighbour-calculation)
+
     * [Central iteration](https://github.com/ZamanidisAlexios/conway_game_of_life#central-iteration)
 
 # Conway's game of life
@@ -43,6 +45,14 @@ After basic stucture allocation, we scatter the grid and we initialize all curre
 
 ![scattering](https://user-images.githubusercontent.com/48658768/70816300-de1f7880-1dd7-11ea-9dbb-22685ad61715.png)
 
+## Neighbour calculation
+
+Before the central iteration each process calculates the ranks of their neighbours, using MPI_Cart_create that makes a new communicator to which topology information has been attached. MPI_Cart_coords determines process coordinates in cartesian topology given rank in group, then with the help of MPI_Cart_rank we get all eight neighbours ranks.
+
+![neighbour_calculation](https://user-images.githubusercontent.com/48658768/72661125-4b2dbb80-39df-11ea-9cbf-67e6a672bfa3.png)
+
+As you can see from the picture, each process does eight requests(pink color) for specific outline elements using the ranks and sends their's eight outline elements(green color) to other neighbour processes.
+
 ### Central iteration
 
 Our basic structure of central iteration is:
@@ -62,3 +72,5 @@ Our basic structure of central iteration is:
     End_for
     EndMPI_Wtime
 ```
+
+Each process sends a variable to process with rank zero that informs if there was a difference between the two generations. If there was not any change on all processes, then the process with rank zero informs all other processes to stop looping.
