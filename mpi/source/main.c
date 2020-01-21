@@ -1,4 +1,4 @@
-#include "../header/grid.h"
+#include "../header/header.h"
 #include "../header/grid.h"
 #include "../header/utilities.h"
 

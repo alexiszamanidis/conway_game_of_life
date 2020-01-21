@@ -19,6 +19,6 @@ utilities.o: utilities.c
 	$(CC) $(CFLAGS) -c utilities.c
 
 usage:
-	@echo 'Usage of Project: mpiexec -n number_of_processes ./game_of_life -d dimentions -l loops -i inputfile -t threads -o'
+	@echo 'Usage of Project: mpiexec -n number_of_processes ./game_of_life -d dimentions -g generations -i inputfile -t threads -o'
 clean: 
 	rm -f $(OBJS) $(EXEC) $(OUTPUT)
