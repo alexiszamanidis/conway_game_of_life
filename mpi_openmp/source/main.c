@@ -2,7 +2,7 @@
 #include "../header/grid.h"
 #include "../header/utilities.h"
 
-// mpiexec -n 4 ./game_of_life -d 10 -l 2 -i ../../inputfiles/grid_10x10.csv -t threads -o
+// mpiexec -n 4 ./game_of_life -d 10 -g 2 -i ../../inputfiles/grid_10x10.csv -t 2 -o
 
 int main( int argc, char **argv ) {
     double local_start, local_end, local_elapsed, max_elapsed;

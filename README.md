@@ -88,4 +88,4 @@ Common pattern types include:
 2. **Oscillators**, which return to their initial state after a finite number of generations.
 3. **Spaceships**, which translate themselves across the grid.
 
-If the game ends or stuck to some pattern you can click on the logo and it will restart with a new random grid.
+If the game ends or stucks to some pattern you can click on the logo and it will restart with a new random grid.
