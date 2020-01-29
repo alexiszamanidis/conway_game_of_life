@@ -75,7 +75,7 @@ Our basic structure of central iteration is:
     EndMPI_Wtime
 ```
 
-Each process sends a variable to process with rank zero that informs if there was a difference between the two generations. If there was not any change on all processes, then the process with rank zero informs all other processes to stop looping.
+Each process sends a variable to process with rank zero that informs if there was a difference between the two generations. If there was a difference between the two generations the variable will be one otherwise zero, so process zero adds all the variables with MPI Reduce. If there was not any change on all processes, the sum will be zero, then the process with rank zero will inform all other processes to stop looping.
 
 ### Visualization
 
