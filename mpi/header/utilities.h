@@ -8,7 +8,6 @@ struct arguments {
     int generations;
     char inputfile[BUFFER_SIZE];
     bool output;
-    int threads;
 };
 
 struct neighbour_processes {

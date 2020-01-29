@@ -2,7 +2,7 @@
 
 void parse_arguments(struct arguments *arguments,int argc, char **argv) {
     int option;
-    while((option = getopt(argc, argv,"d:g:i:t:o")) != -1){
+    while((option = getopt(argc, argv,"d:g:i:o")) != -1){
         switch(option){
             case 'd':
                 arguments->dimension = atoi(optarg);
@@ -16,9 +16,6 @@ void parse_arguments(struct arguments *arguments,int argc, char **argv) {
             case 'o':
                 arguments->output = true;
                 break;
-            case 't':
-                arguments->threads = atoi(optarg);
-                break;
             case '?':
                 printf("parse_arguments: unknown option '%c'\n", optopt);
                 exit(FAILURE);
@@ -31,7 +28,6 @@ void print_arguments(struct arguments arguments) {
     printf("generations = %d\n",arguments.generations);
     printf("inputfile = %s\n",arguments.inputfile);
     printf(arguments.output ? "output = true\n":"output = false\n");
-    printf("threads = %d\n",arguments.threads);
 }
 
 int is_perfect_square(int number) {

@@ -12,7 +12,7 @@ int main( int argc, char **argv ) {
     struct neighbour_processes neighbour_processes;
     struct grid_side_dimensions *grid_side_dimensions = NULL;
     srand(time(NULL));
-    struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .generations = DEFAULT_GENERATIONS, .inputfile = DEFAULT_INPUTFILE, .output = DEFAULT_OUTPUT, .threads = DEFAULT_THREADS };
+    struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .generations = DEFAULT_GENERATIONS, .inputfile = DEFAULT_INPUTFILE, .output = DEFAULT_OUTPUT };
     parse_arguments(&arguments,argc,argv);
 
     // initialize the MPI environment, and disable Profiling

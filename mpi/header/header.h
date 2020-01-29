@@ -16,7 +16,6 @@
 #define DEFAULT_GENERATIONS 10
 #define DEFAULT_INPUTFILE "\0"
 #define DEFAULT_OUTPUT false
-#define DEFAULT_THREADS 2
 #define SUCCESS 0
 #define FAILURE -1
 
