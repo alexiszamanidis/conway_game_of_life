@@ -6,7 +6,7 @@
 
 int main( int argc, char **argv ) {
     double local_start, local_end, local_elapsed, max_elapsed;
-    int number_of_processes, rank_of_the_process, generation, i, j, generation_continue = 1, different_generations, *different_generations_array = NULL;
+    int number_of_processes, rank_of_the_process, generation, i, j, generation_continue = 1, different_generations, sum_different_generations = 0;
     int neighbours, last, subgrid_dimension, process_grid_dimension, *sendcounts, *displs;
     struct grid *grid = NULL,*current_generation = NULL, *next_generation = NULL;
     struct neighbour_processes neighbour_processes;
@@ -35,8 +35,6 @@ int main( int argc, char **argv ) {
             initialize_grid(&grid);
         else
             initialize_grid_from_inputfile(&grid,arguments.inputfile);
-        
-        different_generations_array = allocate_1d_array(number_of_processes);
     }
     // caclulate subgrid dimension and process grid dimension
     subgrid_dimension = calculate_subgrid_dimension(arguments.dimension,number_of_processes);
@@ -216,16 +214,13 @@ int main( int argc, char **argv ) {
         swap_grids(&current_generation,&next_generation);
 
         // get all different generations variables
-        MPI_Gather(&different_generations, 1, MPI_INT, different_generations_array, 1, MPI_INT, 0,MPI_COMM_WORLD);
+        MPI_Reduce(&different_generations, &sum_different_generations, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
         // if there is at least one generation from all the grids that changed, then continue the generation loop
         if( rank_of_the_process == 0 ) {
-            generation_continue = 0;
-            for( int i = 0 ; i < number_of_processes ; i++ ) {
-                if( different_generations_array[i] == 1 ) {
-                    generation_continue = 1;
-                    break;
-                }
-            }
+            if( sum_different_generations == 0 )
+                generation_continue = 0;
+            else
+                sum_different_generations = 0;
         }
         // send the same generation flag to all processes
         MPI_Bcast(&generation_continue, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -250,10 +245,8 @@ int main( int argc, char **argv ) {
     free_grid_side_dimensions(&grid_side_dimensions);
     free_grid(&current_generation);
     free_grid(&next_generation);
-    if( rank_of_the_process == 0 ) {
-        free(different_generations_array);
+    if( rank_of_the_process == 0 )
         free_grid(&grid);
-    }
     // finalize the MPI environment
     MPI_Finalize();
 
