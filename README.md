@@ -13,10 +13,14 @@
   * [Visualization](https://github.com/ZamanidisAlexios/conway_game_of_life#visualization)
   
   * [Benchmarking](https://github.com/ZamanidisAlexios/conway_game_of_life#benchmarking)
-    * [Execution time](https://github.com/ZamanidisAlexios/conway_game_of_life#execution-time)
-    * [Speed up](https://github.com/ZamanidisAlexios/conway_game_of_life#speed-up)
-    * [Εfficiency](https://github.com/ZamanidisAlexios/conway_game_of_life#efficiency)
-
+    * [Mpi measurements](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-measurements)
+      * [Execution time](https://github.com/ZamanidisAlexios/conway_game_of_life#execution-time)
+      * [Speed up](https://github.com/ZamanidisAlexios/conway_game_of_life#speed-up)
+      * [Εfficiency](https://github.com/ZamanidisAlexios/conway_game_of_life#efficiency)
+    * [Mpi OpenMp measurements](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-openmp-measurements)
+      * [Execution time](https://github.com/ZamanidisAlexios/conway_game_of_life#execution-time)
+      * [Speed up](https://github.com/ZamanidisAlexios/conway_game_of_life#speed-up)
+      * [Εfficiency](https://github.com/ZamanidisAlexios/conway_game_of_life#efficiency)
 # Conway's game of life
 
 The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970. The game is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input. One interacts with the Game of Life by creating an initial configuration and observing how it evolves.
@@ -95,32 +99,64 @@ If the game ends or stucks to some pattern you can click on the logo and it will
 
 A benchmark is a test that measures the performance of hardware, software, or computer. These tests can be used to help compare how well a product may do against other products. When comparing benchmarks, the higher the value of the results, the faster the component, software, or overall computer is.
 
+### Mpi measurements
+
+My measurements for MPI implementation. I calculated the execution time of central iteration and compute speed up with S(n,p)=Ts(n)/T(n,p) and efficiency with E(n,p)=S(n,p)/p.
+
 ### Execution time
 
- Dimension\Processes    | 1         | 4        | 9        | 16       |          |          |          |
-------------------------|-----------|----------|----------|----------|----------|----------|----------|
- 360                    | 0.134977  | 0.035347 | 0.061370 | 0.044180 |          |          |          |
- 720                    | 0.552998  | 0.136353 | 0.094569 | 0.068226 |          |          |          |
- 1440                   | 2.206827  | 0.556937 | 0.297027 | 0.173434 |          |          |          |
- 2880                   | 8.864664  | 2.216670 | 1.014753 | 0.593877 |          |          |          |
- 5760                   | 35.419949 | 8.924319 | 4.036822 | 2.299227 |          |          |          |
+ Dimension\Processes    | 1         | 4         | 9         | 16        | 25       | 36       | 49       | 64       |
+------------------------|-----------|-----------|-----------|-----------|----------|----------|----------|----------|
+ 840                    | 0.752412  | 0.193130  | 0.138504  | 0.082561  | 0.078703 | 0.091018 | 0.091000 | 0.102858 |
+ 1680                   | 3.002919  | 0.755565  | 0.374157  | 0.229508  | 0.168460 | 0.148978 | 0.140478 | 0.140119 |
+ 3360                   | 12.088203 | 3.021306  | 1.380812  | 0.796646  | 0.534765 | 0.405058 | 0.325011 | 0.285601 |
+ 6720                   | 48.171624 | 12.172924 | 5.480808  | 3.134355  | 2.008271 | 1.423471 | 1.063272 | 0.852721 |
 
-### Speed up
+#### Speed up
 
- Dimension\Processes    | 1         | 4        |          | 16       |          |          |          |
-------------------------|-----------|----------|----------|----------|----------|----------|----------|
- 360                    | 1         |          |          |          |          |          |          |
- 720                    | 1         |          |          |          |          |          |          |
- 1440                   | 1         |          |          |          |          |          |          |
- 2880                   | 1         |          |          |          |          |          |          |
- 5760                   | 1         |          |          |          |          |          |          |
+ Dimension\Processes    | 1         | 4        | 9        | 16       | 25       | 36       | 49       | 64       |
+------------------------|-----------|----------|----------|----------|----------|----------|----------|----------|
+ 840                    | 1         |          |          |          |          |          |          |          |
+ 1680                   | 1         |          |          |          |          |          |          |          |
+ 3360                   | 1         |          |          |          |          |          |          |          |
+ 6720                   | 1         |          |          |          |          |          |          |          |
 
-### Efficiency
+#### Efficiency
 
- Dimension\Processes    | 1         | 4        |          | 16       |          |          |          |
-------------------------|-----------|----------|----------|----------|----------|----------|----------|
- 360                    | 1         |          |          |          |          |          |          |
- 720                    | 1         |          |          |          |          |          |          |
- 1440                   | 1         |          |          |          |          |          |          |
- 2880                   | 1         |          |          |          |          |          |          |
- 5760                   | 1         |          |          |          |          |          |          |
+ Dimension\Processes    | 1         | 4        | 9        | 16       | 25       | 36       | 49       | 64       |
+------------------------|-----------|----------|----------|----------|----------|----------|----------|----------|
+ 840                    | 1         |          |          |          |          |          |          |          |
+ 1680                   | 1         |          |          |          |          |          |          |          |
+ 3360                   | 1         |          |          |          |          |          |          |          |
+ 6720                   | 1         |          |          |          |          |          |          |          |
+
+ ### Mpi OpenMp measurements
+
+My measurements for MPI OpenMp implementation. I calculated the execution time of central iteration and compute speed up with S(n,p)=Ts(n)/T(n,p) and efficiency with E(n,p)=S(n,p)/p.
+
+### Execution time
+
+ Dimension\Processes    | 1         | 4         | 9         | 16        | 25       | 36       | 49       | 64       |
+------------------------|-----------|-----------|-----------|-----------|----------|----------|----------|----------|
+ 840                    | 0.752412  | 0.193130  | 0.138504  | 0.082561  | 0.078703 | 0.091018 | 0.091000 | 0.102858 |
+ 1680                   | 3.002919  | 0.755565  | 0.374157  | 0.229508  | 0.168460 | 0.148978 | 0.140478 | 0.140119 |
+ 3360                   | 12.088203 | 3.021306  | 1.380812  | 0.796646  | 0.534765 | 0.405058 | 0.325011 | 0.285601 |
+ 6720                   | 48.171624 | 12.172924 | 5.480808  | 3.134355  | 2.008271 | 1.423471 | 1.063272 | 0.852721 |
+
+#### Speed up
+
+ Dimension\Processes    | 1         | 4        | 9        | 16       | 25       | 36       | 49       | 64       |
+------------------------|-----------|----------|----------|----------|----------|----------|----------|----------|
+ 840                    | 1         |          |          |          |          |          |          |          |
+ 1680                   | 1         |          |          |          |          |          |          |          |
+ 3360                   | 1         |          |          |          |          |          |          |          |
+ 6720                   | 1         |          |          |          |          |          |          |          |
+
+#### Efficiency
+
+ Dimension\Processes    | 1         | 4        | 9        | 16       | 25       | 36       | 49       | 64       |
+------------------------|-----------|----------|----------|----------|----------|----------|----------|----------|
+ 840                    | 1         |          |          |          |          |          |          |          |
+ 1680                   | 1         |          |          |          |          |          |          |          |
+ 3360                   | 1         |          |          |          |          |          |          |          |
+ 6720                   | 1         |          |          |          |          |          |          |          |
