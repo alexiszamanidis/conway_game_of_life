@@ -25,7 +25,6 @@ void initialize_grid(struct grid **);
 void initialize_grid_from_inputfile(struct grid **, char *);
 void initialize_sendcounts_and_displs_for_scattering_the_grid(int *, int *, int, int , int);
 int calculate_subgrid_dimension(int ,int );
-void swap_grids(struct grid **,struct grid **);
 void print_grid(struct grid *, int , char *, int );
 void print_sendcounts_and_displs(int *, int *, int);
 void print_grid_side_dimensions(struct grid_side_dimensions *, int , int);
@@ -44,6 +43,13 @@ static inline char apply_rules(char state, int neighbours) {
     // otherwise, if the current state has 2 or 3 neighbors lives on to the next generation
     else
         return state;
+}
+
+static inline void swap_grids(struct grid **current_generation,struct grid **next_generation) {
+    struct grid *temp_grid;
+    temp_grid = *current_generation;
+    *current_generation = *next_generation;
+    *next_generation = temp_grid;
 }
 
 #endif
