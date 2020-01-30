@@ -3,18 +3,19 @@
 * [Conway's game of life](https://github.com/ZamanidisAlexios/conway_game_of_life#conways-game-of-life)
 
   * [Rules](https://github.com/ZamanidisAlexios/conway_game_of_life#rules)
-
+  
   * [Mpi implementation](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-implementation)
-
     * [Grid](https://github.com/ZamanidisAlexios/conway_game_of_life#grid)
-
     * [Scattering](https://github.com/ZamanidisAlexios/conway_game_of_life#scattering)
-
     * [Neighbour calculation](https://github.com/ZamanidisAlexios/conway_game_of_life#neighbour-calculation)
-
     * [Central iteration](https://github.com/ZamanidisAlexios/conway_game_of_life#central-iteration)
 
   * [Visualization](https://github.com/ZamanidisAlexios/conway_game_of_life#visualization)
+  
+  * [Benchmarking](https://github.com/ZamanidisAlexios/conway_game_of_life#benchmarking)
+    * [Execution time](https://github.com/ZamanidisAlexios/conway_game_of_life#execution-time)
+    * [Speed up](https://github.com/ZamanidisAlexios/conway_game_of_life#speed-up)
+    * [Εfficiency](https://github.com/ZamanidisAlexios/conway_game_of_life#efficiency)
 
 # Conway's game of life
 
@@ -41,13 +42,13 @@ After, process with rank equal to 0 allocates and initializes the global grid. T
 
 Then, each process allocates a structure grid side dimensions, current generation and next generation. Structure grid side dimensions is used for saving the outline elements of the grid. Current generation and next generation are used for calculating and saving current local and next local grid cells.
 
-## Scattering
+### Scattering
 
 After basic stucture allocation, we scatter the grid and we initialize all current generation grids. Example, if we have 4 processes, we will have:
 
 ![scattering](https://user-images.githubusercontent.com/48658768/70816300-de1f7880-1dd7-11ea-9dbb-22685ad61715.png)
 
-## Neighbour calculation
+### Neighbour calculation
 
 Before the central iteration each process calculates the ranks of their neighbours, using MPI_Cart_create that makes a new communicator to which topology information has been attached. MPI_Cart_coords determines process coordinates in cartesian topology given rank in group, then with the help of MPI_Cart_rank we get all eight neighbours ranks.
 
@@ -77,7 +78,7 @@ Our basic structure of central iteration is:
 
 Each process sends a variable to process with rank zero that informs if there was a difference between the two generations. If there was a difference between the two generations the variable will be one otherwise zero, so process zero adds all the variables with MPI Reduce. If there was not any change on all processes, the sum will be zero, then the process with rank zero will inform all other processes to stop looping.
 
-### Visualization
+## Visualization
 
 You can run and see an interactive implementation of game of life, running the **conway_game_of_life.html** file.
 It is a simple implementation that will help you to understand the rules and see some common patterns.
@@ -89,3 +90,37 @@ Common pattern types include:
 3. **Spaceships**, which translate themselves across the grid.
 
 If the game ends or stucks to some pattern you can click on the logo and it will restart with a new random grid.
+
+## Benchmarking
+
+A benchmark is a test that measures the performance of hardware, software, or computer. These tests can be used to help compare how well a product may do against other products. When comparing benchmarks, the higher the value of the results, the faster the component, software, or overall computer is.
+
+### Execution time
+
+ Dimension\Processes    | 1         | 4        |          | 16       |          |          |          |
+------------------------|-----------|----------|----------|----------|----------|----------|----------|
+ 360                    | 0.134977  | 0.035347 |          | 0.044180 |          |          |          |
+ 720                    | 0.552998  | 0.136353 |          | 0.068226 |          |          |          |
+ 1440                   | 2.206827  | 0.556937 |          | 0.173434 |          |          |          |
+ 2880                   | 8.864664  | 2.216670 |          | 0.593877 |          |          |          |
+ 5760                   | 35.419949 | 8.924319 |          | 2.299227 |          |          |          |
+
+### Speed up
+
+ Dimension\Processes    | 1         | 4        |          | 16       |          |          |          |
+------------------------|-----------|----------|----------|----------|----------|----------|----------|
+ 360                    | 1         |          |          |          |          |          |          |
+ 720                    | 1         |          |          |          |          |          |          |
+ 1440                   | 1         |          |          |          |          |          |          |
+ 2880                   | 1         |          |          |          |          |          |          |
+ 5760                   | 1         |          |          |          |          |          |          |
+
+### Efficiency
+
+ Dimension\Processes    | 1         | 4        |          | 16       |          |          |          |
+------------------------|-----------|----------|----------|----------|----------|----------|----------|
+ 360                    | 1         |          |          |          |          |          |          |
+ 720                    | 1         |          |          |          |          |          |          |
+ 1440                   | 1         |          |          |          |          |          |          |
+ 2880                   | 1         |          |          |          |          |          |          |
+ 5760                   | 1         |          |          |          |          |          |          |
