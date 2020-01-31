@@ -1,0 +1,1 @@
+rm -rf game_of_life* *.mpiP
