@@ -21,7 +21,7 @@ cd $PBS_O_WORKDIR
 #OpenMP Threads #
 # OMP_NUM_THREADS * ppn should be max 8 (the total number of node cores= 8).
 # To use OpenMPI remember to include -fopenmp in compiler flags in order to activate OpenMP directives.
-export OMP_NUM_THREADS=2
+export OMP_NUM_THREADS=8
 
 # Run executable #
 mpirun -np 49 game_of_life
