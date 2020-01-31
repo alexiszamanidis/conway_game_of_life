@@ -102,7 +102,7 @@ int main( int argc, char **argv ) {
         different_generations = 0;
 
         omp_set_num_threads(arguments.threads);
-        #pragma omp parallel for shared (current_generation, next_generation) private(i, j, different_generations) reduction(+:neighbours) collapse(2)
+        #pragma omp parallel for shared (current_generation, next_generation, different_generations) private(i, j) reduction(+:neighbours) collapse(2)
         // calculate intermidiate elements
         for( i = 1 ; i < current_generation->dimension-1 ; i++ ) {
             for( j = 1 ; j < current_generation->dimension-1 ; j++ ) {
@@ -124,7 +124,7 @@ int main( int argc, char **argv ) {
     //    print_grid_side_dimensions(grid_side_dimensions,current_generation->dimension,rank_of_the_process);
         
         omp_set_num_threads(arguments.threads);
-        #pragma omp parallel for shared (current_generation, next_generation, grid_side_dimensions) private(i,different_generations) reduction(+:neighbours)
+        #pragma omp parallel for shared (current_generation, next_generation, grid_side_dimensions, different_generations) private(i) reduction(+:neighbours)
         // calculate outline elements
         for( i = 1 ; i < current_generation->dimension-1 ; i++ ) {
             // top dimension: sum all alive neighbours
