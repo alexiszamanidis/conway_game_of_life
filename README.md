@@ -14,13 +14,7 @@
   
   * [Benchmarking](https://github.com/ZamanidisAlexios/conway_game_of_life#benchmarking)
     * [Mpi measurements](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-measurements)
-      * [Execution time](https://github.com/ZamanidisAlexios/conway_game_of_life#execution-time)
-      * [Speed up](https://github.com/ZamanidisAlexios/conway_game_of_life#speed-up)
-      * [Εfficiency](https://github.com/ZamanidisAlexios/conway_game_of_life#efficiency)
     * [Mpi OpenMp measurements](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-openmp-measurements)
-      * [Execution time](https://github.com/ZamanidisAlexios/conway_game_of_life#execution-time-1)
-      * [Speed up](https://github.com/ZamanidisAlexios/conway_game_of_life#speed-up-1)
-      * [Εfficiency](https://github.com/ZamanidisAlexios/conway_game_of_life#efficiency-1)
 # Conway's game of life
 
 The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970. The game is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input. One interacts with the Game of Life by creating an initial configuration and observing how it evolves.
@@ -101,8 +95,6 @@ A benchmark is a test that measures the performance of hardware, software, or co
 
 ### Mpi measurements
 
-My measurements for MPI implementation. I calculated the execution time of central iteration and compute speed up with S(n,p)=Ts(n)/T(n,p) and efficiency with E(n,p)=S(n,p)/p.
-
 #### Execution time
 
  Dmnsn\Pro| 1         | 4         | 9         | 16        | 25       | 36       | 49       | 64       |
@@ -131,8 +123,6 @@ My measurements for MPI implementation. I calculated the execution time of centr
  6720     | 1         | 0.989319  | 0.976572  | 0.960557 | 0.959465 | 0.940027 | 0.924593 | 0.882682 |
 
 ### Mpi OpenMp measurements
-
-My measurements for MPI OpenMp implementation. I calculated the execution time of central iteration and compute speed up with S(n,p)=Ts(n)/T(n,p) and efficiency with E(n,p)=S(n,p)/p.
 
 #### Execution time
 
