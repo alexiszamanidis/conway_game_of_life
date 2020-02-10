@@ -71,6 +71,8 @@ int main( int argc, char **argv ) {
         print_grid(grid, rank_of_the_process, "global_grid", 0);
     }
 
+    omp_set_num_threads(arguments.threads);
+
     // start Wtime and Profiling
     MPI_Barrier(MPI_COMM_WORLD);
     local_start = omp_get_wtime();
@@ -101,7 +103,6 @@ int main( int argc, char **argv ) {
         
         different_generations = 0;
 
-        omp_set_num_threads(arguments.threads);
         #pragma omp parallel for shared (current_generation, next_generation, different_generations) private(i, j) reduction(+:neighbours) collapse(2)
         // calculate intermidiate elements
         for( i = 1 ; i < current_generation->dimension-1 ; i++ ) {
@@ -123,7 +124,6 @@ int main( int argc, char **argv ) {
         MPI_Waitall(16, request, status);   
     //    print_grid_side_dimensions(grid_side_dimensions,current_generation->dimension,rank_of_the_process);
         
-        omp_set_num_threads(arguments.threads);
         #pragma omp parallel for shared (current_generation, next_generation, grid_side_dimensions, different_generations) private(i) reduction(+:neighbours)
         // calculate outline elements
         for( i = 1 ; i < current_generation->dimension-1 ; i++ ) {
