@@ -75,7 +75,7 @@ int main( int argc, char **argv ) {
 
     // start Wtime and Profiling
     MPI_Barrier(MPI_COMM_WORLD);
-    local_start = omp_get_wtime();
+    local_start = MPI_Wtime();
     MPI_Pcontrol(1);
 
     // basic structure of central iteration:
@@ -231,7 +231,7 @@ int main( int argc, char **argv ) {
     }
 
     // stop Wtime and Profiling
-    local_end = omp_get_wtime();
+    local_end = MPI_Wtime();
     MPI_Pcontrol(0);
     // calculate local elapsed time
     local_elapsed = local_end - local_start;
