@@ -15,6 +15,9 @@
   * [Benchmarking](https://github.com/ZamanidisAlexios/conway_game_of_life#benchmarking)
     * [Mpi measurements](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-measurements)
     * [Mpi OpenMp measurements](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-openmp-measurements)
+
+  * [Mpi profiling](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-profiling)
+
 # Conway's game of life
 
 The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970. The game is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input. One interacts with the Game of Life by creating an initial configuration and observing how it evolves.
@@ -158,3 +161,8 @@ A benchmark is a test that measures the performance of hardware, software, or co
 ![mpi_openmp_execution_time](https://user-images.githubusercontent.com/48658768/74972148-e6c0aa80-5429-11ea-8b40-f8f2891ba14d.png)
 ![mpi_openmp_speed_up](https://user-images.githubusercontent.com/48658768/74972155-e9bb9b00-5429-11ea-901b-67adb6750192.png)
 ![mpi_openmp_efficiency](https://user-images.githubusercontent.com/48658768/74972161-eb855e80-5429-11ea-9d06-d4ecb903273e.png)
+
+## Mpi profiling
+
+This next section provides an overview of the application's time in MPI. Apptime is the wallclock time from the end of MPI_Init until the beginning of MPI_Finalize. MPI_Time is the wall-clock time for all the MPI calls contained within Apptime. MPI% shows the ratio of this MPI_Time to Apptime. The asterisk (*) is the aggregate line for the entire application.
+
