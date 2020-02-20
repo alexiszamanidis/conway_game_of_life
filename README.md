@@ -122,6 +122,10 @@ A benchmark is a test that measures the performance of hardware, software, or co
  3360     | 1         | 1.000247  | 0.972713  | 0.948367 | 0.904188 | 0.828976 | 0.759045 | 0.661336 |
  6720     | 1         | 0.989319  | 0.976572  | 0.960557 | 0.959465 | 0.940027 | 0.924593 | 0.882682 |
 
+![mpi_execution_time](https://user-images.githubusercontent.com/48658768/74972536-94cc5480-542a-11ea-8039-fedb03cd7343.png)
+![mpi_speed_up](https://user-images.githubusercontent.com/48658768/74972132-e2948d00-5429-11ea-805f-dd71f4800f39.png)
+![mpi_efficiency](https://user-images.githubusercontent.com/48658768/74972139-e3c5ba00-5429-11ea-91e6-e7107bf8bd5d.png)
+
 ### Mpi OpenMp measurements( 8-threads )
 
 #### Execution time
@@ -150,3 +154,7 @@ A benchmark is a test that measures the performance of hardware, software, or co
  1680     | 1         | 1.250193  | 0.885015  | 0.745048 | 0.227322 | 0.127343 | 0.049117 | 0.050373 |
  3360     | 1         | 1.565942  | 0.958685  | 0.908184 | 0.667116 | 0.532570 | 0.295197 | 0.164467 |
  6720     | 1         | 1.809805  | 0.879799  | 0.812152 | 0.743473 | 0.741205 | 0.693401 | 0.568368 |
+
+![mpi_openmp_execution_time](https://user-images.githubusercontent.com/48658768/74972148-e6c0aa80-5429-11ea-8b40-f8f2891ba14d.png)
+![mpi_openmp_speed_up](https://user-images.githubusercontent.com/48658768/74972155-e9bb9b00-5429-11ea-901b-67adb6750192.png)
+![mpi_openmp_efficiency](https://user-images.githubusercontent.com/48658768/74972161-eb855e80-5429-11ea-9d06-d4ecb903273e.png)
