@@ -1,21 +1,16 @@
 ## Table of Contents
 
 * [Conway's game of life](https://github.com/ZamanidisAlexios/conway_game_of_life#conways-game-of-life)
-
   * [Rules](https://github.com/ZamanidisAlexios/conway_game_of_life#rules)
-  
   * [Mpi implementation](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-implementation)
     * [Grid](https://github.com/ZamanidisAlexios/conway_game_of_life#grid)
     * [Scattering](https://github.com/ZamanidisAlexios/conway_game_of_life#scattering)
     * [Neighbour calculation](https://github.com/ZamanidisAlexios/conway_game_of_life#neighbour-calculation)
     * [Central iteration](https://github.com/ZamanidisAlexios/conway_game_of_life#central-iteration)
-
   * [Visualization](https://github.com/ZamanidisAlexios/conway_game_of_life#visualization)
-  
   * [Benchmarking](https://github.com/ZamanidisAlexios/conway_game_of_life#benchmarking)
     * [Mpi measurements](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-measurements)
     * [Mpi OpenMp measurements](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-openmp-measurements)
-
   * [Mpi profiling](https://github.com/ZamanidisAlexios/conway_game_of_life#mpi-profiling)
 
 # Conway's game of life
@@ -129,6 +124,16 @@ A benchmark is a test that measures the performance of hardware, software, or co
 ![mpi_speed_up](https://user-images.githubusercontent.com/48658768/74972132-e2948d00-5429-11ea-805f-dd71f4800f39.png)
 ![mpi_efficiency](https://user-images.githubusercontent.com/48658768/74972139-e3c5ba00-5429-11ea-91e6-e7107bf8bd5d.png)
 
+The ideal value for Speed-up/S(n,p) is p. If S(n,p) = p, then the parallel program with comm_sz = p processes is executed 
+p times faster than the serial program. So we can see from our Speed-up table and graph that for small number of Processes 
+and big number of Dimension our program has almost serial Speed-up. But, for big number of Processes and small number of 
+Dimension our Speed-up is too small. Also, we have very good and decent Speed-up for big number of Processes 
+and big number of Dimension.
+Εfficiency is the Speed-up / Processes, so if we have a serial Speed-up our parallel Εfficiency will be p/p = 1. 
+So we can see from our Εfficiency table and graph that for small number of Processes and big number of Dimension our 
+Εfficiency is almost serial Speed-up. But, for big number of Processes and small number of Dimension our Εfficiency 
+is too small.
+
 ### Mpi OpenMp measurements( 8-threads )
 
 #### Execution time
@@ -162,7 +167,27 @@ A benchmark is a test that measures the performance of hardware, software, or co
 ![mpi_openmp_speed_up](https://user-images.githubusercontent.com/48658768/74972155-e9bb9b00-5429-11ea-901b-67adb6750192.png)
 ![mpi_openmp_efficiency](https://user-images.githubusercontent.com/48658768/74972161-eb855e80-5429-11ea-9d06-d4ecb903273e.png)
 
+So we can see from our Speed-up table and graph that for four processes we get double Speed-up. Μore generally, 
+we can conclude that only for small Processes we have good Speed-up. But, for big number of Processes and big number of 
+Dimension our Speed-up is too small.
+From our Εfficiency table and graph, we can see that for small number of Processes and big number of Dimension our 
+Εfficiency is almost one or even greater than one for four Processes. But, for big number of Processes our Εfficiency 
+is too small.
+
 ## Mpi profiling
 
 This next section provides an overview of the application's time in MPI. Apptime is the wallclock time from the end of MPI_Init until the beginning of MPI_Finalize. MPI_Time is the wall-clock time for all the MPI calls contained within Apptime. MPI% shows the ratio of this MPI_Time to Apptime. The asterisk (*) is the aggregate line for the entire application.
 
+![mpi_time](https://user-images.githubusercontent.com/48658768/74974713-6badc300-542e-11ea-93b0-f1520c9eded4.png)
+
+The callsite section identifies all the MPI callsites within the application. The first number is the callsite ID for this mpiP file. The next column shows the type of MPI call (w/o the MPI_ prefix). The name of the function that contains this MPI call is next, followed by the file name and line number. Finally, the last column shows the PC, or program counter, for that MPI callsite. Note that the default setting for callsite stack walk depth is 1. Other settings will enumerate callsites by the entire stack trace rather than the single callsite alone.
+
+![mpi_callsites](https://user-images.githubusercontent.com/48658768/74974724-723c3a80-542e-11ea-82ee-5ea57a675867.png)
+
+The aggregate time section is a very quick overview of the top twenty MPI callsites that consume the most aggregate time in your application. Call identifies the type of MPI function. Site provides the callsite ID (as listed in the callsite section). Time is the aggregate time for that callsite in milliseconds. The next two columns show the ratio of that aggregate time to the total application time and to the total MPI time, respectively. The COV column indicates the variation in times of individual processes for this callsite by presenting the coefficient of variation as calculated from the individual process times. A larger value indicates more variation between the process times.
+
+![mpi_aggregate_time](https://user-images.githubusercontent.com/48658768/74974731-75372b00-542e-11ea-93ab-e5340fe95051.png)
+
+The next section is similar to the aggregate time section, although it reports on the top 20 callsites for total sent message sizes.
+
+![mpi_aggregate_sent_message_size](https://user-images.githubusercontent.com/48658768/74974743-79fbdf00-542e-11ea-9298-1e0153194937.png)
