@@ -58,4 +58,5 @@ dkms.conf
 *.csv
 
 # executable
-game_of_life
+mpi
+mpi_openmp
