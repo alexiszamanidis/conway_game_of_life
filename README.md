@@ -48,7 +48,7 @@ After basic stucture allocation, we scatter the grid and we initialize all curre
 
 Before the central iteration each process calculates the ranks of their neighbours, using MPI_Cart_create that makes a new communicator to which topology information has been attached. MPI_Cart_coords determines process coordinates in cartesian topology given rank in group, then with the help of MPI_Cart_rank we get all eight neighbours ranks.
 
-![neighbour_calculation](https://user-images.githubusercontent.com/48658768/72804859-31e47380-3c5a-11ea-9ca5-a82395866b0e.png)
+![neighbour_calculation](https://user-images.githubusercontent.com/48658768/79388040-58722c00-7f75-11ea-9d33-5b6cfb738663.png)
 
 As you can see from the picture, each process does eight requests(pink color) for specific outline elements using the ranks and sends their's eight outline elements(green and blue color) to other neighbour processes.
 
