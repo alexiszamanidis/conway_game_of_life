@@ -2,7 +2,7 @@
 #include "../header/grid.h"
 #include "../header/utilities.h"
 
-// mpiexec -n 4 ./game_of_life -d 10 -g 2 -i ../../inputfiles/grid_10x10.csv -o
+// mpiexec -n 4 ./game_of_life -d 10 -g 2 -i ../inputfiles/grid_10x10.csv -o
 
 int main( int argc, char **argv ) {
     double local_start, local_end, local_elapsed, max_elapsed;
@@ -12,7 +12,7 @@ int main( int argc, char **argv ) {
     struct neighbour_processes neighbour_processes;
     struct grid_side_dimensions *grid_side_dimensions = NULL;
     srand(time(NULL));
-    struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .generations = DEFAULT_GENERATIONS, .inputfile = DEFAULT_INPUTFILE, .output = DEFAULT_OUTPUT };
+    struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .generations = DEFAULT_GENERATIONS, .inputfile = DEFAULT_INPUTFILE, .output = DEFAULT_OUTPUT, .threads = 0 };
     parse_arguments(&arguments,argc,argv);
 
     // initialize the MPI environment, and disable Profiling

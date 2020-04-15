@@ -12,11 +12,11 @@ main: $(OBJS) main.c
 	$(CC) $(CFLAGS) $(OBJS) main.c -o $(EXEC) $(MATHFLAG)
 	rm -rf $(OBJS)
 
-grid.o: grid.c 
-	$(CC) $(CFLAGS) -c grid.c
+grid.o: ../source/grid.c 
+	$(CC) $(CFLAGS) -c ../source/grid.c
 
-utilities.o: utilities.c
-	$(CC) $(CFLAGS) -c utilities.c
+utilities.o: ../source/utilities.c
+	$(CC) $(CFLAGS) -c ../source/utilities.c
 
 usage:
 	@echo 'Usage of Project: mpiexec -n number_of_processes ./game_of_life -d dimentions -g generations -i inputfile -o'

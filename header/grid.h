@@ -1,5 +1,5 @@
-#ifndef grid_H_
-#define grid_H_
+#ifndef grid_h_
+#define grid_h_
 
 #include "./header.h"
 #include "./utilities.h"

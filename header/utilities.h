@@ -1,5 +1,5 @@
-#ifndef utilities_H_
-#define utilities_H_
+#ifndef utilities_h_
+#define utilities_h_
 
 #include "./header.h"
 
