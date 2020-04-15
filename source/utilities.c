@@ -86,12 +86,3 @@ void print_neighbour_ranks(struct neighbour_processes neighbour_processes, int r
             ,neighbour_processes.top_right_neighbour_rank,neighbour_processes.top_left_neighbour_rank,
             neighbour_processes.right_neighbour_rank,neighbour_processes.left_neighbour_rank);
 }
-
-int *allocate_1d_array(int number_of_columns) {
-    int *array = (int *)malloc(sizeof(int));
-    if( array == NULL ){
-        printf("allocate_1d_array: %s\n",strerror(errno));
-        exit(FAILURE);
-    }
-    return array;
-}

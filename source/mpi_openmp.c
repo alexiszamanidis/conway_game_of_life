@@ -2,21 +2,21 @@
 #include "../header/grid.h"
 #include "../header/utilities.h"
 
-// mpiexec -n 4 ./game_of_life -d 10 -g 2 -i ../inputfiles/grid_10x10.csv -o
+// mpiexec -n 4 ./mpi_openmp -d 10 -g 2 -i ../inputfiles/grid_10x10.csv -t 2 -o
 
 int main( int argc, char **argv ) {
     double local_start, local_end, local_elapsed, max_elapsed;
-    int number_of_processes, rank_of_the_process, generation, i, j, generation_continue = 1, different_generations, sum_different_generations = 0;
+    int number_of_processes, rank_of_the_process, generation, i, j, provided, generation_continue = 1, different_generations, sum_different_generations = 0;
     int neighbours, last, subgrid_dimension, process_grid_dimension, *sendcounts, *displs;
     struct grid *grid = NULL,*current_generation = NULL, *next_generation = NULL;
     struct neighbour_processes neighbour_processes;
     struct grid_side_dimensions *grid_side_dimensions = NULL;
     srand(time(NULL));
-    struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .generations = DEFAULT_GENERATIONS, .inputfile = DEFAULT_INPUTFILE, .output = DEFAULT_OUTPUT, .threads = 0 };
+    struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .generations = DEFAULT_GENERATIONS, .inputfile = DEFAULT_INPUTFILE, .output = DEFAULT_OUTPUT, .threads = DEFAULT_THREADS };
     parse_arguments(&arguments,argc,argv);
 
     // initialize the MPI environment, and disable Profiling
-    MPI_Init(&argc, &argv);
+    MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &provided);
     MPI_Pcontrol(0);
     // get the number of processes
     MPI_Comm_size(MPI_COMM_WORLD, &number_of_processes);
@@ -71,6 +71,8 @@ int main( int argc, char **argv ) {
         print_grid(grid, rank_of_the_process, "global_grid", 0);
     }
 
+    omp_set_num_threads(arguments.threads);
+
     // start Wtime and Profiling
     MPI_Barrier(MPI_COMM_WORLD);
     local_start = MPI_Wtime();
@@ -101,6 +103,7 @@ int main( int argc, char **argv ) {
         
         different_generations = 0;
 
+        #pragma omp parallel for shared (current_generation, next_generation, different_generations) private(i, j) reduction(+:neighbours) collapse(2)
         // calculate intermidiate elements
         for( i = 1 ; i < current_generation->dimension-1 ; i++ ) {
             for( j = 1 ; j < current_generation->dimension-1 ; j++ ) {
@@ -120,7 +123,8 @@ int main( int argc, char **argv ) {
         // wait for all given communications to complete
         MPI_Waitall(16, request, status);   
     //    print_grid_side_dimensions(grid_side_dimensions,current_generation->dimension,rank_of_the_process);
-
+        
+        #pragma omp parallel for shared (current_generation, next_generation, grid_side_dimensions, different_generations) private(i) reduction(+:neighbours)
         // calculate outline elements
         for( i = 1 ; i < current_generation->dimension-1 ; i++ ) {
             // top dimension: sum all alive neighbours

@@ -1,45 +1,26 @@
 #include "../header/grid.h"
 
 struct grid_side_dimensions *allocate_grid_side_dimensions(int dimension) {
-    struct grid_side_dimensions *grid_side_dimensions = (struct grid_side_dimensions *)malloc(sizeof(struct grid_side_dimensions));
-    grid_side_dimensions->top_dimension = (char *)malloc(dimension*sizeof(char));
-    if( grid_side_dimensions->top_dimension == NULL ) {
-        printf("allocate_grid_side_dimensions: %s\n",strerror(errno));
-        exit(FAILURE);
-    }
-    grid_side_dimensions->bottom_dimension = (char *)malloc(dimension*sizeof(char));
-    if( grid_side_dimensions->bottom_dimension == NULL ) {
-        printf("allocate_grid_side_dimensions: %s\n",strerror(errno));
-        exit(FAILURE);
-    }
-    grid_side_dimensions->left_dimension = (char *)malloc(dimension*sizeof(char));
-    if( grid_side_dimensions->left_dimension == NULL ) {
-        printf("allocate_grid_side_dimensions: %s\n",strerror(errno));
-        exit(FAILURE);
-    }
-    grid_side_dimensions->right_dimension = (char *)malloc(dimension*sizeof(char));
-    if( grid_side_dimensions->right_dimension == NULL ) {
-        printf("allocate_grid_side_dimensions: %s\n",strerror(errno));
-        exit(FAILURE);
-    }
-
+    struct grid_side_dimensions *grid_side_dimensions = my_malloc(struct grid_side_dimensions,1);
+    grid_side_dimensions->top_dimension = my_malloc(char,dimension);
+    error_handler(grid_side_dimensions->top_dimension == NULL,"malloc failed");
+    grid_side_dimensions->bottom_dimension = my_malloc(char,dimension);
+    error_handler(grid_side_dimensions->bottom_dimension == NULL,"malloc failed");
+    grid_side_dimensions->left_dimension = my_malloc(char,dimension);
+    error_handler(grid_side_dimensions->left_dimension == NULL,"malloc failed");
+    grid_side_dimensions->right_dimension = my_malloc(char,dimension);
+    error_handler(grid_side_dimensions->right_dimension == NULL,"malloc failed");
     return grid_side_dimensions;
 }
 
 char **allocate_2d_array(int dimension) {
     // allocate the rows
-    char **array = (char **) malloc(dimension * sizeof(char*));
-    if(array == NULL) {
-        printf("allocate_2d_array: %s\n",strerror(errno));
-        exit(FAILURE);
-    }
+    char **array = my_malloc(char *,dimension);
+    error_handler(array == NULL,"malloc failed");
     
     // allocate all array elements => contiguous allocation
-    char *allocate_all_array_elements = (char *) malloc(dimension * dimension * sizeof(char));
-    if(allocate_all_array_elements == NULL) {
-        printf("allocate_2d_array: %s\n",strerror(errno));
-        exit(FAILURE);
-    }
+    char *allocate_all_array_elements = my_malloc(char,dimension*dimension);
+    error_handler(allocate_all_array_elements == NULL,"malloc failed");
 
     // fix array rows
     for (int i = 0; i < dimension; i++)
@@ -49,11 +30,8 @@ char **allocate_2d_array(int dimension) {
 }
 
 struct grid *allocate_grid(int dimension) {
-    struct grid *grid = (struct grid *)malloc(sizeof(struct grid));
-    if( grid == NULL ) {
-        printf("allocate_grid: %s\n",strerror(errno));
-        exit(FAILURE);
-    }
+    struct grid *grid = my_malloc(struct grid,1);
+    error_handler(grid == NULL,"malloc failed");
 
     grid->array = allocate_2d_array(dimension);
     grid->dimension = dimension;
