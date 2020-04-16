@@ -4,7 +4,7 @@ CFLAGS = -g -Wall
 MATHFLAG = -lm
 EXEC = mpi mpi_openmp
 OBJS = grid.o utilities.o
-OUTPUT = *.csv
+OUTPUT = current_generation next_generation global_grid
 
 all: $(EXEC) usage rm_objectives
 
@@ -29,4 +29,4 @@ usage:
 	@echo 'mpiexec -n number_of_processes ./mpi_openmp -d dimentions -g generations -i inputfile -t threads -o'
 
 clean: 
-	rm -f $(OBJS) $(EXEC) $(OUTPUT)
+	rm -rf $(OBJS) $(EXEC) $(OUTPUT)

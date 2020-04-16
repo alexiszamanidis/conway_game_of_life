@@ -48,10 +48,7 @@ void initialize_grid(struct grid **grid) {
 
 void initialize_grid_from_inputfile(struct grid **grid, char *inputfile) {
     FILE *file_pointer = fopen(inputfile, "r");
-    if( file_pointer == NULL ) {
-        printf("initialize_grid_from_inputfile: %s\n",strerror(errno));
-        exit(FAILURE);
-    }
+    error_handler(file_pointer == NULL, "fopen failed");
     char *line=NULL;
     size_t length=0;
     for( int i = 0 ; i < (*grid)->dimension ; i++ ) {
@@ -62,10 +59,8 @@ void initialize_grid_from_inputfile(struct grid **grid, char *inputfile) {
                     (*grid)->array[i][j] = 1;
                 else if( (line[j]) == '0' )
                     (*grid)->array[i][j] = 0;
-                else {
-                    printf("initialize_grid_from_inputfile: wrong character in inputfile '%s'\n",inputfile);
-                    exit(FAILURE);
-                }
+                else
+                    error_handler(line[j] != '1' && (line[j]) != '0', "initialize_grid_from_inputfile: wrong character in inputfile");
             }
     }
     free(line);
@@ -84,26 +79,21 @@ void initialize_sendcounts_and_displs_for_scattering_the_grid(int *sendcounts, i
 int calculate_subgrid_dimension(int dimension, int number_of_processes) {
     int root = is_perfect_square(number_of_processes);
     
-    if( root == -1 ) {
-        printf("calculate_subgrid_dimension: number of processes should be perfect square\n");
-        exit(FAILURE);
-    }
-    else if( (dimension % root) != 0 ) {
-        printf("calculate_subgrid_dimension: number of processes can not divide perfectly the dimension\n");
-        exit(FAILURE);
-    }
-    else
-        return (dimension / root);
+    error_handler(root == -1, "calculate_subgrid_dimension: number of processes should be perfect square\n");
+    int modulo = dimension % root;
+    error_handler(modulo != 0, "calculate_subgrid_dimension: number of processes can not divide perfectly the dimension\n");
+    return (dimension / root);
 }
 
 void print_grid(struct grid *grid, int rank, char *grid_name, int generation) {
     char filename[200];
-    snprintf(filename, 200, "%s_r%d_g%d.csv",grid_name,rank,generation);
+    struct stat st = {0};
+
+    if(stat(grid_name, &st) == -1)
+        mkdir(grid_name, 0700);
+    snprintf(filename, 200, "%s/%s_r%d_g%d.csv",grid_name,grid_name,rank,generation);
     FILE *file_pointer = fopen(filename, "w+");
-    if( file_pointer == NULL ) {
-        printf("print_grid: %s\n",strerror(errno));
-        exit(FAILURE);
-    }
+    error_handler(file_pointer == NULL, "fopen failed");
 //    fprintf(file_pointer, "Dimension = %d, Subgrid dimension = %d, Process grid dimension = %d \n",grid->dimension, grid->subgrid_dimension, grid->process_grid_dimension);
     for( int i = 0 ; i < grid->dimension ; i++ ) {
         for( int j = 0 ; j < grid->dimension ; j++ )
