@@ -1,4 +1,4 @@
-CC = mpicc
+CC = mpicc -DGOL_DEBUG
 OPENMP = -fopenmp
 CFLAGS = -g -Wall
 MATHFLAG = -lm
@@ -25,8 +25,8 @@ utilities.o: ../source/utilities.c
 
 usage:
 	@echo 'Usage of Game of Life:'
-	@echo 'mpiexec -n number_of_processes ./mpi -d dimentions -g generations -i inputfile -o'
-	@echo 'mpiexec -n number_of_processes ./mpi_openmp -d dimentions -g generations -i inputfile -t threads -o'
+	@echo 'mpiexec -n number_of_processes ./mpi -d dimentions -g generations -i inputfile'
+	@echo 'mpiexec -n number_of_processes ./mpi_openmp -d dimentions -g generations -i inputfile -t threads'
 
 clean: 
 	rm -rf $(OBJS) $(EXEC) $(OUTPUT)

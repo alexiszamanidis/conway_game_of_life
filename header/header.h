@@ -51,4 +51,8 @@
         memcpy(&x,swap_temp,sizeof(x));                                             \
     } while(0)
 
+#ifdef GOL_DEBUG
+#define GOL_DEBUG 1
+#endif
+
 #endif

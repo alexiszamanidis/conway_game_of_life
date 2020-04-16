@@ -13,9 +13,6 @@ void parse_arguments(struct arguments *arguments,int argc, char **argv) {
             case 'i':
                 strcpy(arguments->inputfile,optarg);
                 break;
-            case 'o':
-                arguments->output = true;
-                break;
             case 't':
                 arguments->threads = atoi(optarg);
                 break;
@@ -30,7 +27,6 @@ void print_arguments(struct arguments arguments) {
     printf("dimension = %d\n",arguments.dimension);
     printf("generations = %d\n",arguments.generations);
     printf("inputfile = %s\n",arguments.inputfile);
-    printf(arguments.output ? "output = true\n":"output = false\n");
     printf("threads = %d\n",arguments.threads);
 }
 

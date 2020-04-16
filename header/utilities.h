@@ -7,7 +7,6 @@ struct arguments {
     int dimension;
     int generations;
     char inputfile[BUFFER_SIZE];
-    bool output;
     int threads;
 };
 

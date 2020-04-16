@@ -2,7 +2,7 @@
 #include "../header/grid.h"
 #include "../header/utilities.h"
 
-// mpiexec -n 4 ./mpi -d 10 -g 2 -i ../inputfiles/grid_10x10.csv -o
+// mpiexec -n 4 ./mpi -d 10 -g 2 -i ../inputfiles/grid_10x10.csv
 
 int main( int argc, char **argv ) {
     double local_start, local_end, local_elapsed, max_elapsed;
@@ -12,7 +12,7 @@ int main( int argc, char **argv ) {
     struct neighbour_processes neighbour_processes;
     struct grid_side_dimensions *grid_side_dimensions = NULL;
     srand(time(NULL));
-    struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .generations = DEFAULT_GENERATIONS, .inputfile = DEFAULT_INPUTFILE, .output = DEFAULT_OUTPUT, .threads = 0 };
+    struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .generations = DEFAULT_GENERATIONS, .inputfile = DEFAULT_INPUTFILE, .threads = 0 };
     parse_arguments(&arguments,argc,argv);
 
     // initialize the MPI environment, and disable Profiling
@@ -65,11 +65,13 @@ int main( int argc, char **argv ) {
     MPI_Type_vector(current_generation->dimension, 1, current_generation->dimension, MPI_CHAR, &columns);
     MPI_Type_commit(&columns);
 
-    // print arguments and global grid if the user gave -o output option for printing/debugging
-    if( (rank_of_the_process == 0) && (arguments.output == true) ) {
+#if GOL_DEBUG
+    // print arguments and global grid if the user compiled with -DGOL_DEBUG option for printing/debugging
+    if( rank_of_the_process == 0 ) {
         print_arguments(arguments);
         print_grid(grid, rank_of_the_process, "global_grid", 0);
     }
+#endif
 
     // start Wtime and Profiling
     MPI_Barrier(MPI_COMM_WORLD);
@@ -199,17 +201,17 @@ int main( int argc, char **argv ) {
             }
         }
 
-        // gather global global grid, print current generation and next generation grid for each process if the user gave -o output option for printing/debugging
-        if (arguments.output == true) {
-            MPI_Gatherv(&(next_generation->array[0][0]), next_generation->dimension * next_generation->dimension, MPI_CHAR, &(grid->array[0][0]), sendcounts, displs, blocktype_1, 0,MPI_COMM_WORLD);
-            print_grid(current_generation, rank_of_the_process, "current_generation", generation+1);
-            print_grid(next_generation, rank_of_the_process, "next_generation", generation+1);
-            // if the process's rank is 0, then print current generation to stdout and global grid
-            if( rank_of_the_process == 0 ) {
-                printf("Generation: %d\n", generation+1);
-                print_grid(grid, rank_of_the_process, "global_grid", generation+1);
-            }
+        // gather global global grid, print current generation and next generation grid for each process if the user compiled with -DGOL_DEBUG option for printing/debugging
+#if GOL_DEBUG
+        MPI_Gatherv(&(next_generation->array[0][0]), next_generation->dimension * next_generation->dimension, MPI_CHAR, &(grid->array[0][0]), sendcounts, displs, blocktype_1, 0,MPI_COMM_WORLD);
+        print_grid(current_generation, rank_of_the_process, "current_generation", generation+1);
+        print_grid(next_generation, rank_of_the_process, "next_generation", generation+1);
+        // if the process's rank is 0, then print current generation to stdout and global grid
+        if( rank_of_the_process == 0 ) {
+            printf("Generation: %d\n", generation+1);
+            print_grid(grid, rank_of_the_process, "global_grid", generation+1);
         }
+#endif
         // swap generations
         swap_grids(&current_generation,&next_generation);
 
