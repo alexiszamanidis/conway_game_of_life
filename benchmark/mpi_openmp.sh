@@ -1,8 +1,8 @@
 #!/bin/bash
 
 function print_green {
-    reset='\033[0m'             # reset
-    green='\033[0;32m'          # green
+    reset='\033[0m'
+    green='\033[0;32m'
     echo -e "${green}$1${reset}"
 }
 

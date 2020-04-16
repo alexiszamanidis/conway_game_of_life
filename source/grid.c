@@ -63,7 +63,7 @@ void initialize_grid_from_inputfile(struct grid **grid, char *inputfile) {
                     error_handler(line[j] != '1' && (line[j]) != '0', "initialize_grid_from_inputfile: wrong character in inputfile");
             }
     }
-    free(line);
+    free_pointer(&line);
     fclose(file_pointer);
 }
 
@@ -143,21 +143,21 @@ void print_1d_array(char *array, int dimension) {
 void free_2d_array(char ***array) {
     if( *array == NULL)
         return;
-    free(&((*array)[0][0]));
-    free(*array);
+    free_pointer(*array);
+    free_pointer(array);
 }
 
 void free_grid(struct grid **grid) {
     if( *grid == NULL)
         return;
     free_2d_array(&(*grid)->array);
-    free((*grid));
+    free_pointer(grid);
 }
 
 void free_grid_side_dimensions(struct grid_side_dimensions **grid_side_dimensions) {
-    free((*grid_side_dimensions)->top_dimension);
-    free((*grid_side_dimensions)->bottom_dimension);
-    free((*grid_side_dimensions)->left_dimension);
-    free((*grid_side_dimensions)->right_dimension);
-    free((*grid_side_dimensions));
+    free_pointer(&(*grid_side_dimensions)->top_dimension);
+    free_pointer(&(*grid_side_dimensions)->bottom_dimension);
+    free_pointer(&(*grid_side_dimensions)->left_dimension);
+    free_pointer(&(*grid_side_dimensions)->right_dimension);
+    free_pointer(grid_side_dimensions);
 }

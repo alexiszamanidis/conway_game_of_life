@@ -1,21 +1,20 @@
-CC = mpicc -DGOL_DEBUG
-OPENMP = -fopenmp
+CC = mpicc -fopenmp #-DGOL_DEBUG
 CFLAGS = -g -Wall
 MATHFLAG = -lm
 EXEC = mpi mpi_openmp
 OBJS = grid.o utilities.o
 OUTPUT = current_generation next_generation global_grid
 
-all: $(EXEC) usage rm_objectives
+all: $(EXEC) usage rm_output
 
 mpi: $(OBJS) mpi.c
 	$(CC) $(CFLAGS) $(OBJS) mpi.c -o mpi $(MATHFLAG)
 
 mpi_openmp: $(OBJS) mpi_openmp.c
-	$(CC) $(OPENMP) $(CFLAGS) $(OBJS) mpi_openmp.c -o mpi_openmp $(MATHFLAG)
+	$(CC) $(CFLAGS) -DMPI_OPENMP $(OBJS) mpi_openmp.c -o mpi_openmp $(MATHFLAG)
 
-rm_objectives:
-	rm -rf $(OBJS)
+rm_output:
+	rm -rf $(OUTPUT)
 
 grid.o: ../source/grid.c 
 	$(CC) $(CFLAGS) -c ../source/grid.c

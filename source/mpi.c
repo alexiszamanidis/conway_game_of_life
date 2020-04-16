@@ -6,8 +6,8 @@
 
 int main( int argc, char **argv ) {
     double local_start, local_end, local_elapsed, max_elapsed;
-    int number_of_processes, rank_of_the_process, generation, i, j, generation_continue = 1, different_generations, sum_different_generations = 0;
-    int neighbours, last, subgrid_dimension, process_grid_dimension, *sendcounts, *displs;
+    int number_of_processes, rank_of_the_process, generation, generation_continue = 1, different_generations, sum_different_generations = 0;
+    int last, subgrid_dimension, process_grid_dimension, *sendcounts, *displs;
     struct grid *grid = NULL,*current_generation = NULL, *next_generation = NULL;
     struct neighbour_processes neighbour_processes;
     struct grid_side_dimensions *grid_side_dimensions = NULL;
@@ -25,7 +25,7 @@ int main( int argc, char **argv ) {
 
     MPI_Datatype blocktype_1, blocktype_2;
     MPI_Status status[16];
-    MPI_Request request[16];
+    MPI_Request *request = my_malloc(MPI_Request,16);
     MPI_Datatype columns;
 
     // allocate, initialize grid and different generations array
@@ -54,13 +54,12 @@ int main( int argc, char **argv ) {
     displs = (int *)malloc(sizeof(int)*((int)pow(process_grid_dimension,2)));
     // initialize sendcounts, displacements and scatter the grid
     initialize_sendcounts_and_displs_for_scattering_the_grid(sendcounts,displs,grid->dimension,subgrid_dimension,process_grid_dimension);
-//    print_sendcounts_and_displs(sendcounts,displs,grid);
+
     // scatter a buffer in blocks to all processes in a communicator  
     MPI_Scatterv(&(grid->array[0][0]), sendcounts, displs, blocktype_1, &current_generation->array[0][0], subgrid_dimension*subgrid_dimension, MPI_CHAR, 0, MPI_COMM_WORLD);
 
     // calculate neighbour coordinates and ranks
     calculate_neighbours(&neighbour_processes,rank_of_the_process,process_grid_dimension);
-//    print_neighbour_ranks(neighbour_processes,rank_of_the_process);
 
     MPI_Type_vector(current_generation->dimension, 1, current_generation->dimension, MPI_CHAR, &columns);
     MPI_Type_commit(&columns);
@@ -82,124 +81,20 @@ int main( int argc, char **argv ) {
     for( generation = 0 ; (generation < arguments.generations) && (generation_continue == 1) ; generation++ ) {
         
         // receive all neighbours
-        MPI_Irecv(grid_side_dimensions->bottom_dimension, current_generation->dimension, MPI_CHAR, neighbour_processes.top_neighbour_rank, 0,MPI_COMM_WORLD, &request[8]);
-        MPI_Irecv(grid_side_dimensions->top_dimension, current_generation->dimension, MPI_CHAR, neighbour_processes.bottom_neighbour_rank, 0,MPI_COMM_WORLD, &request[9]);
-        MPI_Irecv(grid_side_dimensions->right_dimension, current_generation->dimension, MPI_CHAR, neighbour_processes.left_neighbour_rank, 0,MPI_COMM_WORLD, &request[10]);
-        MPI_Irecv(grid_side_dimensions->left_dimension, current_generation->dimension, MPI_CHAR, neighbour_processes.right_neighbour_rank, 0,MPI_COMM_WORLD, &request[11]);
-        MPI_Irecv(&grid_side_dimensions->bottom_right_corner, 1, MPI_CHAR, neighbour_processes.top_left_neighbour_rank, 0, MPI_COMM_WORLD, &request[12]);
-        MPI_Irecv(&grid_side_dimensions->bottom_left_corner, 1, MPI_CHAR, neighbour_processes.top_right_neighbour_rank, 0, MPI_COMM_WORLD, &request[13]);
-        MPI_Irecv(&grid_side_dimensions->top_right_corner, 1, MPI_CHAR, neighbour_processes.bottom_left_neighbour_rank, 0, MPI_COMM_WORLD, &request[14]);
-        MPI_Irecv(&grid_side_dimensions->top_left_corner, 1, MPI_CHAR, neighbour_processes.bottom_right_neighbour_rank, 0, MPI_COMM_WORLD, &request[15]);
-
+        receive(grid_side_dimensions,current_generation,neighbour_processes,request);
         // send all neighbours
-        MPI_Isend(&current_generation->array[0][0], current_generation->dimension, MPI_CHAR, neighbour_processes.top_neighbour_rank, 0, MPI_COMM_WORLD, &request[0]);
-        MPI_Isend(&current_generation->array[current_generation->dimension-1][0], current_generation->dimension, MPI_CHAR, neighbour_processes.bottom_neighbour_rank, 0, MPI_COMM_WORLD, &request[1]);
-        MPI_Isend(&current_generation->array[0][0], 1, columns, neighbour_processes.left_neighbour_rank, 0,MPI_COMM_WORLD, &request[2]);
-        MPI_Isend(&current_generation->array[0][current_generation->dimension-1], 1, columns, neighbour_processes.right_neighbour_rank, 0, MPI_COMM_WORLD, &request[3]);
-        MPI_Isend(&current_generation->array[0][0], 1, MPI_CHAR, neighbour_processes.top_left_neighbour_rank, 0,MPI_COMM_WORLD, &request[4]);
-        MPI_Isend(&current_generation->array[0][current_generation->dimension-1], 1, MPI_CHAR, neighbour_processes.top_right_neighbour_rank, 0, MPI_COMM_WORLD, &request[5]);
-        MPI_Isend(&current_generation->array[current_generation->dimension-1][0], 1, MPI_CHAR, neighbour_processes.bottom_left_neighbour_rank, 0,MPI_COMM_WORLD, &request[6]);
-        MPI_Isend(&current_generation->array[current_generation->dimension-1][current_generation->dimension-1],1, MPI_CHAR, neighbour_processes.bottom_right_neighbour_rank, 0, MPI_COMM_WORLD, &request[7]);
+        send(current_generation,neighbour_processes,columns,request);
         
         different_generations = 0;
 
-        // calculate intermidiate elements
-        for( i = 1 ; i < current_generation->dimension-1 ; i++ ) {
-            for( j = 1 ; j < current_generation->dimension-1 ; j++ ) {
-                // sum all alive neighbours
-                neighbours = (current_generation->array[i-1][j-1])+(current_generation->array[i-1][j])+(current_generation->array[i-1][j+1])
-                            +(current_generation->array[i][j-1])+(current_generation->array[i][j+1])
-                            +(current_generation->array[i+1][j-1])+(current_generation->array[i+1][j])+(current_generation->array[i+1][j+1]);
-                // apply the rules and create next generation grid
-                next_generation->array[i][j] = apply_rules(current_generation->array[i][j],neighbours);
-
-                // check if there is a difference between the generations
-                if( (different_generations == 0) && (next_generation->array[i][j] != current_generation->array[i][j]) )
-                    different_generations = 1;
-            }
-        }
+        // calculate intermidiate elements while waiting for receiving the outlines
+        calculate_intermidiate_elements(current_generation,next_generation,&different_generations);
 
         // wait for all given communications to complete
         MPI_Waitall(16, request, status);   
-    //    print_grid_side_dimensions(grid_side_dimensions,current_generation->dimension,rank_of_the_process);
 
-        // calculate outline elements
-        for( i = 1 ; i < current_generation->dimension-1 ; i++ ) {
-            // top dimension: sum all alive neighbours
-            neighbours = (current_generation->array[0][i-1])+(current_generation->array[0][i+1])
-                        +(current_generation->array[1][i-1])+(current_generation->array[1][i])+(current_generation->array[1][i+1])
-                        +(grid_side_dimensions->top_dimension[i-1])+(grid_side_dimensions->top_dimension[i])+(grid_side_dimensions->top_dimension[i+1]);
-            // apply the rules and create next generation grid
-            next_generation->array[0][i] = apply_rules(current_generation->array[0][i],neighbours);
-
-            // bottom dimension: sum all alive neighbours
-            neighbours = (current_generation->array[last][i-1])+(current_generation->array[last][i+1])
-                        +(current_generation->array[last-1][i-1])+(current_generation->array[last-1][i])+(current_generation->array[last-1][i+1])
-                        +(grid_side_dimensions->bottom_dimension[i-1])+(grid_side_dimensions->bottom_dimension[i])+(grid_side_dimensions->bottom_dimension[i+1]);
-            // apply the rules and create next generation grid
-            next_generation->array[last][i] = apply_rules(current_generation->array[last][i],neighbours);
-
-            // left dimension: sum all alive neighbours
-            neighbours = (current_generation->array[i-1][0])+(current_generation->array[i+1][0])
-                        +(current_generation->array[i-1][1])+(current_generation->array[i][1])+(current_generation->array[i+1][1])
-                        +(grid_side_dimensions->left_dimension[i-1])+(grid_side_dimensions->left_dimension[i])+(grid_side_dimensions->left_dimension[i+1]);
-            // apply the rules and create next generation grid
-            next_generation->array[i][0] = apply_rules(current_generation->array[i][0],neighbours);
-
-            // right dimension: sum all alive neighbours
-            neighbours = (current_generation->array[i-1][last])+(current_generation->array[i+1][last])
-                        +(current_generation->array[i-1][last-1])+(current_generation->array[i][last-1])+(current_generation->array[i+1][last-1])
-                        +(grid_side_dimensions->right_dimension[i-1])+(grid_side_dimensions->right_dimension[i])+(grid_side_dimensions->right_dimension[i+1]);
-            // apply the rules and create next generation grid
-            next_generation->array[i][last] = apply_rules(current_generation->array[i][last],neighbours);
-
-            // check if there is a difference between the generations
-            if( different_generations == 0 ) {
-                if( (next_generation->array[0][i] != current_generation->array[0][i]) || (next_generation->array[last][i] != current_generation->array[last][i]) ||
-                    (next_generation->array[i][0] != current_generation->array[i][0]) || (next_generation->array[i][last] != current_generation->array[i][last]) ) {
-                    different_generations = 1;
-                }
-            }
-        }
-        // top left corner cell: sum all alive neighbours
-        neighbours = (current_generation->array[0][1])+(current_generation->array[1][0])+(current_generation->array[1][1])
-                    +(grid_side_dimensions->top_dimension[0])+(grid_side_dimensions->top_dimension[1])
-                    +(grid_side_dimensions->left_dimension[0])+(grid_side_dimensions->left_dimension[1])
-                    +(grid_side_dimensions->top_left_corner);
-        // apply the rules and create next generation grid
-        next_generation->array[0][0] = apply_rules(current_generation->array[0][0],neighbours);
-
-        // top right corner cell: sum all alive neighbours
-        neighbours = (current_generation->array[0][last-1])+(current_generation->array[1][last])+(current_generation->array[1][last-1])
-                    +(grid_side_dimensions->top_dimension[last])+(grid_side_dimensions->top_dimension[last-1])
-                    +(grid_side_dimensions->right_dimension[0])+(grid_side_dimensions->right_dimension[1])
-                    +(grid_side_dimensions->top_right_corner);
-        // apply the rules and create next generation grid
-        next_generation->array[0][last] = apply_rules(current_generation->array[0][last],neighbours);
-
-        // bottom left corner cell: sum all alive neighbours
-        neighbours = (current_generation->array[last-1][0])+(current_generation->array[last-1][1])+(current_generation->array[last][1])
-                    +(grid_side_dimensions->bottom_dimension[0])+(grid_side_dimensions->bottom_dimension[1])
-                    +(grid_side_dimensions->left_dimension[last])+(grid_side_dimensions->left_dimension[last-1])
-                    +(grid_side_dimensions->bottom_left_corner);
-        // apply the rules and create next generation grid
-        
-        next_generation->array[last][0] = apply_rules(current_generation->array[last][0],neighbours);
-        // bottom right corner cell: sum all alive neighbours
-        neighbours = (current_generation->array[last-1][last])+(current_generation->array[last-1][last-1])+(current_generation->array[last][last-1])
-                    +(grid_side_dimensions->bottom_dimension[last])+(grid_side_dimensions->bottom_dimension[last-1])
-                    +(grid_side_dimensions->right_dimension[last])+(grid_side_dimensions->right_dimension[last-1])
-                    +(grid_side_dimensions->bottom_right_corner);
-        // apply the rules and create next generation grid
-        next_generation->array[last][last] = apply_rules(current_generation->array[last][last],neighbours);
-
-        // check if there is a difference between the generations
-        if( different_generations == 0 ) {
-            if( (next_generation->array[0][0] != current_generation->array[0][0]) || (next_generation->array[0][last] != current_generation->array[0][last]) ||
-                (next_generation->array[last][0] != current_generation->array[last][0]) || (next_generation->array[last][last] != current_generation->array[last][last]) ) {
-                different_generations = 1;
-            }
-        }
+        // when we have received outline elements from other processes we calculate them
+        calculate_outline_elements(current_generation,next_generation,grid_side_dimensions,&different_generations,last);
 
         // gather global global grid, print current generation and next generation grid for each process if the user compiled with -DGOL_DEBUG option for printing/debugging
 #if GOL_DEBUG
@@ -213,7 +108,7 @@ int main( int argc, char **argv ) {
         }
 #endif
         // swap generations
-        swap_grids(&current_generation,&next_generation);
+        swap(current_generation,next_generation);
 
         // get all different generations variables
         MPI_Reduce(&different_generations, &sum_different_generations, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -242,11 +137,12 @@ int main( int argc, char **argv ) {
     // free all structures
     MPI_Type_free(&blocktype_1);
     MPI_Type_free(&blocktype_2);
-    free(sendcounts);
-    free(displs);
+    free_pointer(&sendcounts);
+    free_pointer(&displs);
     free_grid_side_dimensions(&grid_side_dimensions);
     free_grid(&current_generation);
     free_grid(&next_generation);
+    free_pointer(&request);
     if( rank_of_the_process == 0 )
         free_grid(&grid);
     // finalize the MPI environment

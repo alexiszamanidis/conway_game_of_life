@@ -43,6 +43,14 @@
 #define print(x) printf(#x" = "), printf(my_printf(x), x);
 #define printnl(x) do { print(x); printf("\n"); } while(0)
 
+#define free_pointer(pointer)                                               \
+    do {                                                                    \
+        if( *pointer != NULL ) {                                            \
+            free(*pointer);                                                 \
+            *pointer = NULL;                                                \
+        }                                                                   \
+    } while (0)
+
 #define swap(x,y)                                                                   \
     do {                                                                            \
         unsigned char swap_temp[sizeof(x) == sizeof(y) ? (signed)sizeof(x) : -1];   \
