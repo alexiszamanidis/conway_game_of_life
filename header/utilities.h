@@ -34,7 +34,5 @@ struct neighbour_processes {
 void parse_arguments(struct arguments *,int , char **);
 void print_arguments(struct arguments );
 int is_perfect_square(int );
-void calculate_neighbours(struct neighbour_processes *, int, int);
-void print_neighbour_ranks(struct neighbour_processes , int );
 
 #endif

@@ -1,6 +1,7 @@
 #include "../header/header.h"
 #include "../header/grid.h"
 #include "../header/utilities.h"
+#include "../header/mpi.h"
 
 // mpiexec -n 4 ./mpi -d 10 -g 2 -i ../inputfiles/grid_10x10.csv
 
@@ -8,7 +9,7 @@ int main( int argc, char **argv ) {
     double local_start, local_end, local_elapsed, max_elapsed;
     int number_of_processes, rank_of_the_process, generation, generation_continue = 1, different_generations, sum_different_generations = 0;
     int last, subgrid_dimension, process_grid_dimension, *sendcounts, *displs;
-    struct grid *grid = NULL,*current_generation = NULL, *next_generation = NULL;
+    struct grid *grid = NULL, *current_generation = NULL, *next_generation = NULL;
     struct neighbour_processes neighbour_processes;
     struct grid_side_dimensions *grid_side_dimensions = NULL;
     srand(time(NULL));

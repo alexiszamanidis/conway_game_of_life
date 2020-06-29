@@ -6,6 +6,7 @@ OBJS = grid.o utilities.o
 OUTPUT = current_generation next_generation global_grid
 
 all: $(EXEC) usage rm_output
+	rm -rf $(OBJS)
 
 mpi: $(OBJS) mpi.c
 	$(CC) $(CFLAGS) $(OBJS) mpi.c -o mpi $(MATHFLAG)
