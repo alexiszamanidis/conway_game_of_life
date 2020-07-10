@@ -2,7 +2,7 @@
 
 * [Benchmarking](https://github.com/ZamanidisAlexios/conway_game_of_life/tree/master/benchmark#benchmarking)
   * [Mpi measurements](https://github.com/ZamanidisAlexios/conway_game_of_life/tree/master/benchmark#mpi-measurements)
-  * [Mpi OpenMp measurements](https://github.com/ZamanidisAlexios/conway_game_of_life/tree/master/benchmark#mpi-openmp-measurements)
+  * [Mpi OpenMp measurements](https://github.com/ZamanidisAlexios/conway_game_of_life/tree/master/benchmark#mpi-openmp-measurements--8-threads-)
 
 
 ## Benchmarking
@@ -54,7 +54,7 @@ So we can see from our Εfficiency table and graph that for small number of Proc
 Εfficiency is almost serial Speed-up. But, for big number of Processes and small number of Dimension our Εfficiency 
 is too small.
 
-### Mpi OpenMp measurements( 8-threads )
+### Mpi OpenMp measurements ( 8-threads )
 
 #### Execution time
 
