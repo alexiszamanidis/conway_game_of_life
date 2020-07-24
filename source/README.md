@@ -67,19 +67,6 @@ If there was a difference between the two generations the variable will be one o
 variables with MPI Reduce. If there was not any change on all processes, the sum will be zero, then the process with rank 
 zero will inform all other processes to stop looping.
 
-## Visualization
-
-You can run and see an interactive implementation of game of life, running the **conway_game_of_life.html** file.
-It is a simple implementation that will help you to understand the rules and see some common patterns.
-Many different types of patterns occur in the Game of Life, which are classified according to their behaviour.
-Common pattern types include:
-
-1. **Still lifes**, which do not change from one generation to the next.
-2. **Oscillators**, which return to their initial state after a finite number of generations.
-3. **Spaceships**, which translate themselves across the grid.
-
-If the game ends or stucks to some pattern you can click on the logo and it will restart with a new random grid.
-
 ## Mpi profiling
 
 This next section provides an overview of the application's time in MPI. Apptime is the wallclock time from the end of MPI_Init until the beginning of MPI_Finalize. MPI_Time is the wall-clock time for all the MPI calls contained within Apptime. MPI% shows the ratio of this MPI_Time to Apptime. The asterisk (*) is the aggregate line for the entire application.

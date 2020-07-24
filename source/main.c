@@ -3,8 +3,6 @@
 #include "../header/utilities.h"
 #include "../header/mpi.h"
 
-// mpiexec -n 4 ./mpi -d 10 -g 2 -i ../inputfiles/grid_10x10.csv
-
 int main( int argc, char **argv ) {
     double local_start, local_end, local_elapsed, max_elapsed;
     int number_of_processes, rank_of_the_process, generation, generation_continue = 1, different_generations, sum_different_generations = 0;
@@ -13,11 +11,16 @@ int main( int argc, char **argv ) {
     struct neighbour_processes neighbour_processes;
     struct grid_side_dimensions *grid_side_dimensions = NULL;
     srand(time(NULL));
-    struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .generations = DEFAULT_GENERATIONS, .inputfile = DEFAULT_INPUTFILE, .threads = 0 };
+    struct arguments arguments = (struct arguments) { .dimension = DEFAULT_DIMENSION, .generations = DEFAULT_GENERATIONS, .inputfile = DEFAULT_INPUTFILE, .threads = DEFAULT_THREADS };
     parse_arguments(&arguments,argc,argv);
 
-    // initialize the MPI environment, and disable Profiling
+// initialize the MPI environment, and disable Profiling
+#if MPI_OPENMP
+    int provided;
+    MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &provided);
+#else
     MPI_Init(&argc, &argv);
+#endif
     MPI_Pcontrol(0);
     // get the number of processes
     MPI_Comm_size(MPI_COMM_WORLD, &number_of_processes);
@@ -26,7 +29,7 @@ int main( int argc, char **argv ) {
 
     MPI_Datatype blocktype_1, blocktype_2;
     MPI_Status status[16];
-    MPI_Request *request = my_malloc(MPI_Request,16);
+    MPI_Request request[16];
     MPI_Datatype columns;
 
     // allocate, initialize grid and different generations array
@@ -71,6 +74,10 @@ int main( int argc, char **argv ) {
         print_arguments(arguments);
         print_grid(grid, rank_of_the_process, "global_grid", 0);
     }
+#endif
+
+#if MPI_OPENMP
+    omp_set_num_threads(arguments.threads);
 #endif
 
     // start Wtime and Profiling
@@ -143,7 +150,6 @@ int main( int argc, char **argv ) {
     free_grid_side_dimensions(&grid_side_dimensions);
     free_grid(&current_generation);
     free_grid(&next_generation);
-    free_pointer(&request);
     if( rank_of_the_process == 0 )
         free_grid(&grid);
     // finalize the MPI environment

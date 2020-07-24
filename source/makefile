@@ -8,11 +8,11 @@ OUTPUT = current_generation next_generation global_grid
 all: $(EXEC) usage rm_output
 	rm -rf $(OBJS)
 
-mpi: $(OBJS) mpi.c
-	$(CC) $(CFLAGS) $(OBJS) mpi.c -o mpi $(MATHFLAG)
+mpi: $(OBJS) main.c
+	$(CC) $(CFLAGS) $(OBJS) main.c -o mpi $(MATHFLAG)
 
-mpi_openmp: $(OBJS) mpi_openmp.c
-	$(CC) $(CFLAGS) -DMPI_OPENMP $(OBJS) mpi_openmp.c -o mpi_openmp $(MATHFLAG)
+mpi_openmp: $(OBJS) main.c
+	$(CC) $(CFLAGS) -DMPI_OPENMP $(OBJS) main.c -o mpi_openmp $(MATHFLAG)
 
 rm_output:
 	rm -rf $(OUTPUT)
